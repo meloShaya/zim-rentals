@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'django_filters',
+    'debug_toolbar',
     
     # Local apps
     'accounts',
@@ -65,6 +66,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # CORS middleware - must be at the top
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -334,3 +336,8 @@ CORS_ALLOW_CREDENTIALS = True
 # CORS_ALLOWED_ORIGINS = [
 #     "https://yourmobileapp.com",
 # ]
+
+# Debug Toolbar Settings
+INTERNAL_IPS = [
+    '127.0.0.1',
+]

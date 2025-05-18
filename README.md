@@ -70,7 +70,7 @@ python manage.py createsuperuser
 
 ```bash
 python manage.py runserver
-# or
+# or below command after setting up redis and celery
 export DJANGO_SETTINGS_MODULE=zim_rentals.settings && daphne -b 0.0.0.0 -p 8000 zim_rentals.asgi:application
 ```
 
