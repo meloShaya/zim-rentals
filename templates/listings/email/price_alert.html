@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Listings for Your Saved Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .container {
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .alert-name {
+            background-color: #e9f5ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .listing {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #fff;
+        }
+        .listing-title {
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+        .listing-price {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 18px;
+        }
+        .listing-location {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        .listing-features {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            text-align: center;
+            color: #6c757d;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Zim Rentals</div>
+            <p>New listings matching your search!</p>
+        </div>
+        
+        <p>Hello {{ user.first_name|default:user.username }},</p>
+        
+        <p>We found {{ listings_count }} new listing{{ listings_count|pluralize }} that match{{ listings_count|pluralize:"es" }} your saved search criteria.</p>
+        
+        <div class="alert-name">
+            <strong>Search Name:</strong> {{ saved_search.name }}
+        </div>
+        
+        <h3>Matching Listings:</h3>
+        
+        {% for listing in listings %}
+            <div class="listing">
+                <div class="listing-title">{{ listing.title }}</div>
+                <div class="listing-price">${{ listing.price }}</div>
+                <div class="listing-location">{{ listing.suburb }}, {{ listing.get_city_display }}</div>
+                <div class="listing-features">
+                    {{ listing.get_property_type_display }} • 
+                    {{ listing.bedrooms }} bed • 
+                    {{ listing.bathrooms }} bath •
+                    {% if listing.is_furnished %}Furnished{% else %}Unfurnished{% endif %}
+                </div>
+                <a href="http://{{ site.domain }}{% url 'listings:listing_detail' listing.id %}" class="btn">View Listing</a>
+            </div>
+        {% endfor %}
+        
+        <p>
+            <a href="http://{{ site.domain }}{% url 'listings:saved_search_results' saved_search.id %}" class="btn">View All Matching Listings</a>
+        </p>
+        
+        <div class="footer">
+            <p>You're receiving this email because you set up a price alert on Zim Rentals.</p>
+            <p>To manage your alerts, <a href="http://{{ site.domain }}{% url 'listings:saved_search_list' %}">visit your saved searches</a>.</p>
+            <p>© {% now "Y" %} Zim Rentals. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html> 

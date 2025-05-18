@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - Zim Rentals{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title mb-0">My Profile</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="width: 200px; height: 200px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 200px; height: 200px; margin: 0 auto;">
+                            <i class="fas fa-user fa-4x text-muted"></i>
+                        </div>
+                        {% endif %}
+                        <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary mb-2 w-100">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </a>
+                        
+                        {% if user.user_type == 'landlord' %}
+                            {% if user.is_verified_landlord %}
+                                <div class="badge bg-success p-2 mb-3 w-100">
+                                    <i class="fas fa-shield-alt me-1"></i> Verified Landlord
+                                </div>
+                            {% else %}
+                                <a href="{% url 'accounts:landlord_verification' %}" class="btn btn-outline-success mb-2 w-100">
+                                    <i class="fas fa-shield-alt me-1"></i> Get Verified
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h4>Personal Information</h4>
+                        <table class="table">
+                            <tr>
+                                <th>Name:</th>
+                                <td>{{ user.get_full_name|default:"Not set" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>{{ user.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Phone:</th>
+                                <td>{{ user.phone_number|default:"Not set" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Account Type:</th>
+                                <td>
+                                    {{ user.get_user_type_display }}
+                                    {% if user.user_type == 'landlord' and user.is_verified_landlord %}
+                                        <i class="fas fa-check-circle text-success ms-1" title="Verified Landlord"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Account Status:</th>
+                                <td>
+                                    {% if user.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+                                    
+                                    {% if user.user_type == 'landlord' %}
+                                        {% if user.is_verified_landlord %}
+                                        <span class="badge bg-success">Verified Landlord</span>
+                                        {% else %}
+                                        <span class="badge bg-warning">Unverified Landlord</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                {% if user.user_type == 'landlord' %}
+                <hr>
+                <h4>My Listings</h4>
+                <div class="row">
+                    {% for listing in user.listings.all %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            {% if listing.images.first %}
+                            <img src="{{ listing.images.first.image.url }}" class="card-img-top" alt="{{ listing.title }}" style="height: 150px; object-fit: cover;">
+                            {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                <i class="fas fa-home fa-3x text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {{ listing.title }}
+                                    {% if user.is_verified_landlord %}
+                                        <i class="fas fa-shield-alt text-success" title="Listed by a verified landlord"></i>
+                                    {% endif %}
+                                </h5>
+                                <p class="card-text">
+                                    <small class="text-muted">{{ listing.get_city_display }}, {{ listing.suburb }}</small>
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-primary">{{ listing.currency }} {{ listing.price }}</span>
+                                    <a href="{% url 'listings:listing_detail' listing.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            You haven't created any listings yet.
+                            <a href="{% url 'listings:listing_create' %}" class="alert-link">Create your first listing</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

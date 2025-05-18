@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if is_create %}Create{% else %}Update{% endif %} Roommate Profile
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'listings:roommate_list' %}">Roommates</a></li>
+                    {% if is_create %}
+                        <li class="breadcrumb-item active" aria-current="page">Create Profile</li>
+                    {% else %}
+                        <li class="breadcrumb-item"><a href="{% url 'listings:roommate_detail' profile.id %}">{{ profile.title }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Profile</li>
+                    {% endif %}
+                </ol>
+            </nav>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">{% if is_create %}Create{% else %}Update{% endif %} Your Roommate Profile</h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead mb-4">
+                        {% if is_create %}
+                            Create a profile to help find the perfect roommate. The more information you provide, the better your chances of finding a good match.
+                        {% else %}
+                            Update your roommate profile information to help find the perfect match.
+                        {% endif %}
+                    </p>
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="border-bottom pb-2 mb-3">Basic Information</h4>
+                            </div>
+                            <div class="col-md-12">
+                                {{ form.title|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                {{ form.age|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.gender|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.lifestyle|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="border-bottom pb-2 mb-3">Location & Budget</h4>
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.city|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.suburb|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.min_budget|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.max_budget|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.move_in_date|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="border-bottom pb-2 mb-3">About You</h4>
+                            </div>
+                            <div class="col-md-12">
+                                {{ form.bio|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4 class="border-bottom pb-2 mb-3">Preferences & Additional Details</h4>
+                            </div>
+                            <div class="col-md-12">
+                                {{ form.preferences|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    {{ form.is_smoker }}
+                                    <label class="form-check-label" for="{{ form.is_smoker.id_for_label }}">
+                                        I am a smoker
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    {{ form.has_pets }}
+                                    <label class="form-check-label" for="{{ form.has_pets.id_for_label }}">
+                                        I have pets
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% if is_create %}{% url 'listings:roommate_list' %}{% else %}{% url 'listings:roommate_detail' profile.id %}{% endif %}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                {% if is_create %}Create Profile{% else %}Update Profile{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if listing.is_direct_message %}
+        Chat with {{ listing.landlord.username }}
+    {% else %}
+        Chat - {{ listing.title }}
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/chat.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4>
+                            {% if listing.is_direct_message %}
+                                {% if listing.landlord == user %}
+                                    {% with other_user=None %}
+                                        {% for message in chat_messages %}
+                                            {% if message.user != user and not other_user %}
+                                                {% with other_user=message.user %}
+                                                    Chat with {{ other_user.username }}
+                                                {% endwith %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if not other_user %}
+                                            Chat
+                                        {% endif %}
+                                    {% endwith %}
+                                {% else %}
+                                    Chat with {{ listing.landlord.username }}
+                                {% endif %}
+                                <span class="badge bg-info ms-2">Roommate Finder</span>
+                            {% else %}
+                                Chat with {{ listing.landlord.username }}
+                                {% if from_roommate %}
+                                <span class="badge bg-info ms-2">Roommate Finder</span>
+                                {% endif %}
+                            {% endif %}
+                        </h4>
+                        <p class="mb-0">
+                            {% if listing.is_direct_message %}
+                                Direct message for roommate inquiry
+                            {% else %}
+                                Property: {{ listing.title }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div>
+                        <a href="{% url 'listings:delete_chat' listing.id %}" class="btn btn-sm btn-danger">
+                            <i class="fas fa-trash"></i> Delete Chat
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="chat-messages" class="chat-messages">
+                        {% for message in chat_messages %}
+                            <div class="message {% if message.user == user %}sent{% else %}received{% endif %}" data-message-id="{{ message.id }}">
+                                <div class="message-content">
+                                    <strong>{{ message.user.username }}</strong>
+                                    <p>{{ message.message }}</p>
+                                    <small class="text-muted d-flex justify-content-between align-items-center">
+                                        <span>{{ message.created_at|date:"g:i A" }}</span>
+                                        <div>
+                                            {% if message.user == user %}
+                                                <span class="read-status">
+                                                    {% if message.is_read %}
+                                                        <i class="fas fa-check-double text-primary"></i> Read
+                                                        {% if message.read_at %}
+                                                            at {{ message.read_at|date:"g:i A" }}
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <i class="fas fa-check text-muted"></i> Sent
+                                                    {% endif %}
+                                                </span>
+                                            {% endif %}
+                                            <a href="{% url 'listings:delete_message' message.id %}" class="btn btn-sm btn-link text-danger">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="chat-input mt-3">
+                        <form id="chat-form">
+                            <div class="input-group">
+                                <input type="text" id="chat-message-input" class="form-control" placeholder="Type your message...">
+                                <button type="submit" class="btn btn-primary">Send</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const listingId = {{ listing.id }};
+    let chatSocket = null;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+    const reconnectDelay = 5000; // 5 seconds
+    
+    // Function to scroll chat to bottom
+    function scrollToBottom() {
+        const messagesDiv = document.querySelector('#chat-messages');
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+    
+    // Scroll to bottom when page loads
+    document.addEventListener('DOMContentLoaded', scrollToBottom);
+
+    function connectWebSocket() {
+        if (chatSocket) {
+            chatSocket.close();
+        }
+
+        const wsUrl = 'ws://' + window.location.host + '/ws/chat/' + listingId + '/';
+        console.log('Attempting to connect to WebSocket:', wsUrl);
+
+        chatSocket = new WebSocket(wsUrl);
+
+        chatSocket.onopen = function(e) {
+            console.log('WebSocket connection established');
+            reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+        };
+
+        chatSocket.onmessage = function(e) {
+            console.log('Received message:', e.data);
+            const data = JSON.parse(e.data);
+            
+            if (data.type === 'message') {
+                const messagesDiv = document.querySelector('#chat-messages');
+                
+                if (data.error) {
+                    console.error('Error:', data.error);
+                    return;
+                }
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${data.user_id === {{ user.id }} ? 'sent' : 'received'}`;
+                messageDiv.dataset.messageId = data.message_id;
+                
+                const date = new Date(data.created_at);
+                const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                let readStatusHtml = '';
+                if (data.user_id === {{ user.id }}) {
+                    const readAt = data.read_at ? new Date(data.read_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+                    readStatusHtml = `
+                        <span class="read-status">
+                            <i class="fas fa-check${data.is_read ? '-double text-primary' : ' text-muted'}"></i>
+                            ${data.is_read ? 'Read' + (readAt ? ` at ${readAt}` : '') : 'Sent'}
+                        </span>
+                    `;
+                }
+                
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        <strong>${data.username}</strong>
+                        <p>${data.message}</p>
+                        <small class="text-muted d-flex justify-content-between align-items-center">
+                            <span>${timeString}</span>
+                            <div>
+                                ${readStatusHtml}
+                                <a href="/listings/message/${data.message_id}/delete/" class="btn btn-sm btn-link text-danger">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </small>
+                    </div>
+                `;
+                
+                messagesDiv.appendChild(messageDiv);
+                scrollToBottom();
+                
+                // If this is a received message, mark it as read
+                if (data.user_id !== {{ user.id }}) {
+                    chatSocket.send(JSON.stringify({
+                        'type': 'mark_read',
+                        'message_id': data.message_id
+                    }));
+                }
+            } else if (data.type === 'read_status') {
+                // Update read status for the message
+                const messageDiv = document.querySelector(`[data-message-id="${data.message_id}"]`);
+                if (messageDiv) {
+                    const readStatus = messageDiv.querySelector('.read-status');
+                    if (readStatus) {
+                        const readAt = data.read_at ? new Date(data.read_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+                        readStatus.innerHTML = `
+                            <i class="fas fa-check-double text-primary"></i>
+                            Read${readAt ? ` at ${readAt}` : ''}
+                        `;
+                    }
+                }
+            }
+        };
+
+        chatSocket.onclose = function(e) {
+            console.log('WebSocket connection closed:', e.code, e.reason);
+            if (reconnectAttempts < maxReconnectAttempts) {
+                reconnectAttempts++;
+                console.log(`Attempting to reconnect (${reconnectAttempts}/${maxReconnectAttempts})...`);
+                setTimeout(connectWebSocket, reconnectDelay);
+            } else {
+                console.error('Max reconnection attempts reached. Please refresh the page to try again.');
+            }
+        };
+
+        chatSocket.onerror = function(e) {
+            console.error('WebSocket error:', e);
+        };
+    }
+
+    // Initial connection
+    connectWebSocket();
+
+    // Form submission handling
+    const chatForm = document.querySelector('#chat-form');
+    const messageInput = document.querySelector('#chat-message-input');
+    
+    function handleSubmit(e) {
+        e.preventDefault();
+        const message = messageInput.value.trim();
+        
+        if (!message) {
+            return;
+        }
+        
+        if (!chatSocket || chatSocket.readyState !== WebSocket.OPEN) {
+            console.error('WebSocket is not connected. Please wait for reconnection or refresh the page.');
+            return;
+        }
+        
+        try {
+            const messageData = {
+                'type': 'message',
+                'message': message
+            };
+            console.log('Sending message:', messageData);
+            chatSocket.send(JSON.stringify(messageData));
+            messageInput.value = '';
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
+    }
+
+    chatForm.addEventListener('submit', handleSubmit);
+</script>
+{% endblock %} 

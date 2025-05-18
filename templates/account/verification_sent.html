@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Verification Email Sent - Zim Rentals{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<style>
+    .verification-card {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    .verification-steps {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+    .verification-steps ol {
+        margin-bottom: 0;
+        padding-left: 25px;
+    }
+    .verification-steps li {
+        margin-bottom: 10px;
+    }
+    .verification-steps li:last-child {
+        margin-bottom: 0;
+    }
+    .trouble-section {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="verification-card">
+        <div class="text-center mb-4">
+            <i class="fas fa-envelope-open-text fa-3x text-primary mb-3"></i>
+            <h1>Verification Email Sent</h1>
+            <p class="lead">We've sent a verification email to: <strong>{{ email }}</strong></p>
+        </div>
+        
+        <div class="verification-steps">
+            <h5><i class="fas fa-check-circle me-2 text-success"></i>Next Steps:</h5>
+            <ol>
+                <li>Check your email inbox for a message from Zim Rentals</li>
+                <li>Click the verification link in the email to confirm your account</li>
+                <li>If you don't see the email, check your spam/junk folder</li>
+                <li>Once verified, you'll be able to log in to your account</li>
+            </ol>
+        </div>
+        
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Important:</strong> Email verification is required before you can use your account. 
+            The verification link will expire in 3 days.
+        </div>
+        
+        <div class="trouble-section">
+            <h5>Having Trouble?</h5>
+            <p>If you don't receive the email within a few minutes:</p>
+            <ul>
+                <li>Check your spam or junk email folder</li>
+                <li>Make sure you entered the correct email address</li>
+                <li>
+                    <a href="{% url 'account_email' %}">Send a new verification email</a>
+                </li>
+            </ul>
+            <p class="mt-3 mb-0">
+                <a href="{% url 'account_login' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Return to Login
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

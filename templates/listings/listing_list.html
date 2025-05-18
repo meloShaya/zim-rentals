@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Find Your Perfect Home in Zimbabwe | Zim Rentals{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero section styles */
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{% static "images/hero-image.jpg" %}');
+        background-color: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 80px 0;
+        margin-bottom: 30px;
+        border-radius: 0 0 15px 15px;
+        
+    }
+    
+    .hero-content {
+        max-width: 600px;
+    }
+    
+    /* Property card enhancements */
+    .property-card {
+        transition: all 0.3s ease;
+        border: none;
+        overflow: hidden;
+    }
+    
+    .property-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .property-image-container {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .property-image {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .property-card:hover .property-image {
+        transform: scale(1.05);
+    }
+    
+    .property-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: white;
+    }
+    
+    .property-price {
+        font-size: 1.25rem;
+        color: #007bff;
+    }
+    
+    .property-features {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    /* Stats counter */
+    .stats-counter {
+        background-color: #f8f9fa;
+        padding: 30px 0;
+        border-radius: 10px;
+        margin: 30px 0;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 15px;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #007bff;
+        margin-bottom: 0;
+    }
+    
+    .stat-label {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+    
+    /* Filter section */
+    .filter-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 20px;
+    }
+    
+    .filter-card .card-header {
+        background-color: #007bff;
+        color: white;
+        border-radius: 10px 10px 0 0;
+    }
+    
+    /* CTA sections */
+    .cta-card {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 25px;
+        margin-top: 30px;
+        text-align: center;
+    }
+    
+    /* Load more button */
+    .load-more-container {
+        text-align: center;
+        margin: 30px 0;
+    }
+    
+    .load-more-btn {
+        padding: 10px 40px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .load-more-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Testimonial section */
+    .testimonial-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        padding: 20px;
+        margin-top: 20px;
+    }
+    
+    .testimonial-card img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .testimonial-text {
+        font-style: italic;
+        color: #555;
+    }
+    
+    /* How it works section */
+    .how-it-works {
+        background-color: #f8f9fa;
+        padding: 50px 0;
+        margin: 40px 0;
+        border-radius: 10px;
+    }
+    
+    .step-card {
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .step-card i {
+        font-size: 3rem;
+        color: #007bff;
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="display-4 fw-bold mb-4">Find Your Perfect Home in Zimbabwe</h1>
+            <p class="lead mb-4">Browse thousands of rental properties in Harare, Bulawayo, and other major cities. Simplifying the rental process for you.</p>
+            <a href="#listings" class="btn btn-primary btn-lg">Browse Properties</a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'account_signup' %}" class="btn btn-outline-light btn-lg ms-2">Sign Up Today</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Stats Counter -->
+    <div class="stats-counter row">
+        <div class="col-md-3 col-6">
+            <div class="stat-item">
+                <p class="stat-number">{{ total_listings }}</p>
+                <p class="stat-label">Properties</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-item">
+                <p class="stat-number">5+</p>
+                <p class="stat-label">Cities</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-item">
+                <p class="stat-number">100+</p>
+                <p class="stat-label">Happy Tenants</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-item">
+                <p class="stat-number">24/7</p>
+                <p class="stat-label">Support</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="text-center mb-5">How Zim Rentals Works</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <i class="fas fa-search"></i>
+                        <h4>Search & Filter</h4>
+                        <p>Browse properties by location, price range, and property features to find your ideal home.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <i class="fas fa-comments"></i>
+                        <h4>Connect with Landlords</h4>
+                        <p>Message landlords directly through our secure platform - no middlemen or agents.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <i class="fas fa-key"></i>
+                        <h4>Move In</h4>
+                        <p>Schedule viewings, agree on terms, and move into your new home with confidence.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="row" id="listings">
+        <!-- Search and Filter Sidebar -->
+        <div class="col-md-3">
+            <div class="card filter-card mb-4 sticky-top">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fas fa-filter me-2"></i>Search & Filter</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" id="filter-form">
+                        <div class="mb-3">
+                            <label for="q" class="form-label">Search</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="q" name="q" value="{{ request.GET.q }}" placeholder="Search listings...">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <select class="form-select" id="city" name="city">
+                                <option value="">All Cities</option>
+                                {% for city_code, city_name in cities %}
+                                <option value="{{ city_code }}" {% if request.GET.city == city_code %}selected{% endif %}>{{ city_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="property_type" class="form-label">Property Type</label>
+                            <select class="form-select" id="property_type" name="property_type">
+                                <option value="">All Types</option>
+                                {% for type_code, type_name in property_types %}
+                                <option value="{{ type_code }}" {% if request.GET.property_type == type_code %}selected{% endif %}>{{ type_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Price Range</label>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" name="min_price" placeholder="Min" value="{{ request.GET.min_price }}">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" name="max_price" placeholder="Max" value="{{ request.GET.max_price }}">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-2"></i>Apply Filters
+                        </button>
+                        <a href="{% url 'listings:listing_list' %}" class="btn btn-outline-secondary w-100 mt-2">
+                            <i class="fas fa-times me-2"></i>Clear Filters
+                        </a>
+                        
+                        {% if user.is_authenticated %}
+                        <hr>
+                        <div class="mt-2">
+                            <a href="{% url 'listings:saved_search_create' %}?{% for key, value in request.GET.items %}{{ key }}={{ value }}&{% endfor %}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-bell me-1"></i> Save as Price Alert
+                            </a>
+                            <small class="text-muted d-block mt-1">Get notified when new listings match these criteria</small>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Testimonial Card -->
+            <div class="testimonial-card">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="me-3 rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">Tatenda M.</h5>
+                        <small class="text-muted">Harare, Zimbabwe</small>
+                    </div>
+                </div>
+                <p class="testimonial-text">
+                    "I found my dream apartment in just 3 days using Zim Rentals! The process was simple and the landlord was responsive."
+                </p>
+                <div class="text-warning">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Listings Grid -->
+        <div class="col-md-9">
+            <!-- Listings Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Available Properties <small class="text-muted">({{ total_listings }})</small></h2>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-secondary active">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Listings -->
+            <div class="row" id="listings-container">
+                {% include "listings/listing_cards.html" %}
+            </div>
+            
+            <!-- Load More Button -->
+            {% if listings.has_next %}
+            <div class="load-more-container">
+                <button id="load-more-btn" class="btn btn-outline-primary load-more-btn" data-next-page="{{ listings.next_page_number }}">
+                    <i class="fas fa-plus-circle me-2"></i>Load More Properties
+                </button>
+            </div>
+            {% endif %}
+            
+            <!-- CTA Card for Landlords -->
+            <div class="cta-card">
+                <h3 class="mb-3">Are you a landlord?</h3>
+                <p class="mb-4">List your property for free and reach thousands of potential tenants.</p>
+                {% if user.is_authenticated %}
+                    {% if user.user_type == 'landlord' %}
+                        <a href="{% url 'listings:listing_create' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-plus-circle me-2"></i>Create New Listing
+                        </a>
+                    {% else %}
+                        <a href="{% url 'accounts:profile' %}" class="btn btn-light btn-lg">
+                            <i class="fas fa-user-edit me-2"></i>Update Profile to Landlord
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'account_signup' %}?user_type=landlord" class="btn btn-light btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Sign Up as Landlord
+                    </a>
+                    <p class="mt-2 mb-0 text-white-50">
+                        <small>Already have an account? <a href="{% url 'account_login' %}" class="text-white">Login</a></small>
+                    </p>
+                {% endif %}
+            </div>
+            
+            <!-- Second Testimonial -->
+            <div class="testimonial-card mt-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="me-3 rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">John M.</h5>
+                        <small class="text-muted">Bulawayo, Zimbabwe</small>
+                    </div>
+                </div>
+                <p class="testimonial-text">
+                    "As a landlord, I've rented out my properties through Zim Rentals for over a year now. The quality of tenants has been exceptional and the process seamless."
+                </p>
+                <div class="text-warning">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', function() {
+                const nextPage = this.dataset.nextPage;
+                const container = document.getElementById('listings-container');
+                
+                // Show loading state
+                loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+                loadMoreBtn.disabled = true;
+                
+                // Get current URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('page', nextPage);
+                urlParams.set('format', 'json');
+                
+                // Fetch more listings via AJAX
+                fetch(`${window.location.pathname}?${urlParams.toString()}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Append new listings to container
+                    container.insertAdjacentHTML('beforeend', data.html);
+                    
+                    // Update load more button or remove if no more pages
+                    if (data.has_next) {
+                        loadMoreBtn.dataset.nextPage = data.next_page;
+                        loadMoreBtn.innerHTML = '<i class="fas fa-plus-circle me-2"></i>Load More Properties';
+                        loadMoreBtn.disabled = false;
+                    } else {
+                        loadMoreBtn.parentNode.remove();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading more listings:', error);
+                    loadMoreBtn.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Error Loading More';
+                    loadMoreBtn.disabled = false;
+                });
+            });
+        }
+    });
+</script>
+{% endblock %} 

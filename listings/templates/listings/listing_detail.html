@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block google_maps_api %}
+<!-- Load Google Maps API globally -->
+<script async src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}" id="google-maps-script"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div id="listingCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% if listing.featured_image %}
+                            <div class="carousel-item active">
+                                <img src="{{ listing.featured_image.url }}" class="d-block w-100" alt="{{ listing.title }}">
+                            </div>
+                        {% endif %}
+                        {% for image in listing.get_images %}
+                            <div class="carousel-item {% if not listing.featured_image and forloop.first %}active{% endif %}">
+                                <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ listing.title }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if listing.featured_image or listing.get_images %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h1 class="card-title">{{ listing.title }}</h1>
+                    <h2 class="text-primary">${{ listing.price }}</h2>
+                    <p class="text-muted">{{ listing.suburb }}, {{ listing.get_city_display }}</p>
+                    <hr>
+                    <h4>Description</h4>
+                    <p>{{ listing.description }}</p>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Property Type:</strong> {{ listing.get_property_type_display }}</p>
+                            <p><strong>Bedrooms:</strong> {{ listing.bedrooms }}</p>
+                            <p><strong>Bathrooms:</strong> {{ listing.bathrooms }}</p>
+                            <p><strong>Furnished:</strong> {% if listing.is_furnished %}Yes{% else %}No{% endif %}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Utilities:</strong></p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas {% if listing.has_water %}fa-check text-success{% else %}fa-times text-danger{% endif %}"></i> Water</li>
+                                <li><i class="fas {% if listing.has_electricity %}fa-check text-success{% else %}fa-times text-danger{% endif %}"></i> Electricity</li>
+                                <li><i class="fas {% if listing.has_wifi %}fa-check text-success{% else %}fa-times text-danger{% endif %}"></i> WiFi</li>
+                            </ul>
+                            <p><strong>Status:</strong> {% if listing.is_available %}Available{% else %}Not Available{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4>Contact Information</h4>
+                    <hr>
+                    {% if listing.phone_number %}
+                        <p><strong>Phone:</strong> {{ listing.phone_number }}</p>
+                    {% endif %}
+                    {% if listing.whatsapp_number %}
+                        <p><strong>WhatsApp:</strong> {{ listing.whatsapp_number }}</p>
+                    {% endif %}
+                    {% if not listing.phone_number and not listing.whatsapp_number %}
+                        <p class="text-muted">No contact information provided</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h4>Location</h4>
+                    <hr>
+                    <p><strong>Address:</strong> {{ listing.address }}</p>
+                    <div id="map" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for Maps API to load then initialize map
+        waitForGoogleMapsToLoad(function() {
+            const latitude = {{ listing.latitude }};
+            const longitude = {{ listing.longitude }};
+            const title = "{{ listing.title }}";
+            
+            // Initialize map with marker
+            initializeMap('map', latitude, longitude, title);
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %} 

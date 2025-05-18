@@ -1,0 +1,299 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{% block title %}Zim Rentals{% endblock %}</title>
+
+		<!-- Bootstrap 5 CSS -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+		<!-- Font Awesome -->
+		<link
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+			rel="stylesheet"
+		/>
+		<!-- Custom CSS -->
+		<style>
+			.navbar-brand {
+				font-weight: bold;
+			}
+			.property-card {
+				transition: transform 0.2s;
+			}
+			.property-card:hover {
+				transform: translateY(-5px);
+			}
+			.property-image {
+				height: 200px;
+				object-fit: cover;
+			}
+			.whatsapp-btn {
+				background-color: #25d366;
+				color: white;
+			}
+			.whatsapp-btn:hover {
+				background-color: #128c7e;
+				color: white;
+			}
+		</style>
+		{% block extra_css %}{% endblock %}
+
+		<!-- Google Maps API - Load on pages that need it -->
+		{% if 'maps' in request.path or 'listing' in request.path %}
+		<script>
+			// Track if Google Maps loaded
+			window.googleMapsLoaded = false;
+
+			// This function will be called by the Google Maps API callback
+			function initMapGlobal() {
+				console.log("Google Maps API loaded successfully!");
+				window.googleMapsLoaded = true;
+
+				// Execute page specific initialization if available
+				if (typeof initPageMap === "function") {
+					console.log("Calling initPageMap from callback...");
+					setTimeout(initPageMap, 100); // Small delay to ensure DOM is ready
+				} else {
+					console.warn(
+						"initPageMap function not found when Google Maps loaded"
+					);
+				}
+			}
+
+			// Error handler for Maps API loading
+			function googleMapsLoadError() {
+				console.error("Failed to load Google Maps API!");
+				document.getElementById("map").innerHTML =
+					'<div class="alert alert-danger">Failed to load Google Maps. Please check your internet connection and try again.</div>';
+			}
+		</script>
+		<script
+			id="google-maps-api"
+			src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMapGlobal"
+			onerror="googleMapsLoadError()"
+		></script>
+		{% endif %}
+	</head>
+	<body
+		data-user-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}"
+	>
+		<!-- Navigation -->
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+			<div class="container">
+				<a class="navbar-brand" href="{% url 'listings:listing_list' %}"
+					>Zim Rentals</a
+				>
+				<button
+					class="navbar-toggler"
+					type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#navbarNav"
+				>
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav me-auto">
+						<li class="nav-item">
+							<a
+								class="nav-link"
+								href="{% url 'listings:listing_list' %}"
+								>Properties</a
+							>
+						</li>
+						<li class="nav-item">
+							<a
+								class="nav-link"
+								href="{% url 'listings:roommate_list' %}"
+								>Find Roommate</a
+							>
+						</li>
+						{% if user.is_authenticated and user.user_type == 'landlord' %}
+						<li class="nav-item">
+							<a
+								class="nav-link"
+								href="{% url 'listings:listing_create' %}"
+								>Create Listing</a
+							>
+						</li>
+						{% endif %}
+					</ul>
+					<ul class="navbar-nav">
+						{% if user.is_authenticated %}
+						<li class="nav-item">
+							<a
+								class="nav-link"
+								href="{% url 'listings:saved_search_list' %}"
+							>
+								<i class="fas fa-bell"></i> My Alerts
+							</a>
+						</li>
+						<li class="nav-item">
+							<a
+								class="nav-link"
+								href="{% url 'listings:landlord_messages' %}"
+							>
+								<i class="fas fa-envelope"></i> Messages 
+								{% if unread_messages_count > 0 %}
+								<span class="badge bg-danger"
+									>{{ unread_messages_count }}</span
+								>
+								{% endif %}
+							</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a
+								class="nav-link dropdown-toggle"
+								href="#"
+								id="navbarDropdown"
+								role="button"
+								data-bs-toggle="dropdown"
+							>
+								<i class="fas fa-user"></i> {{ user.email }}
+							</a>
+							<ul class="dropdown-menu dropdown-menu-end">
+								<li>
+									<a
+										class="dropdown-item"
+										href="{% url 'accounts:profile' %}"
+										>Profile</a
+									>
+								</li>
+								{% if user.user_type == 'renter' %}
+								<li>
+									<a
+										class="dropdown-item"
+										href="{% url 'accounts:favorites' %}"
+										>Favorites</a
+									>
+								</li>
+								{% endif %} {% if user.user_type == 'landlord' and not user.is_verified_landlord %}
+								<li>
+									<a
+										class="dropdown-item"
+										href="{% url 'accounts:landlord_verification' %}"
+									>
+										<i
+											class="fas fa-shield-alt text-success me-1"
+										></i>
+										Get Verified
+									</a>
+								</li>
+								{% endif %}
+								<li><hr class="dropdown-divider" /></li>
+								<li>
+									<a
+										class="dropdown-item"
+										href="{% url 'account_logout' %}"
+										>Logout</a
+									>
+								</li>
+							</ul>
+						</li>
+						{% else %}
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'account_login' %}"
+								>Login</a
+							>
+						</li>
+						<li class="nav-item">
+							<a
+								class="nav-link"
+								href="{% url 'account_signup' %}"
+								>Sign Up</a
+							>
+						</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<!-- Messages -->
+		<div class="container mt-3">
+			{% if messages %} {% for message in messages %}
+			<div
+				class="alert alert-{{ message.tags }} alert-dismissible fade show"
+			>
+				{{ message }}
+				<button
+					type="button"
+					class="btn-close"
+					data-bs-dismiss="alert"
+				></button>
+			</div>
+			{% endfor %} {% endif %}
+		</div>
+
+		<!-- Main Content -->
+		<main class="container my-4">{% block content %} {% endblock %}</main>
+
+		<!-- Footer -->
+		<footer class="bg-dark text-white py-4 mt-5">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-4">
+						<h5>About Zim Rentals</h5>
+						<p>
+							Connecting landlords and renters across Zimbabwe's
+							major cities.
+						</p>
+					</div>
+					<div class="col-md-4">
+						<h5>Quick Links</h5>
+						<ul class="list-unstyled">
+							<li>
+								<a
+									href="{% url 'listings:listing_list' %}"
+									class="text-white"
+									>Browse Listings</a
+								>
+							</li>
+							<li>
+								<a href="#" class="text-white">How It Works</a>
+							</li>
+							<li>
+								<a href="#" class="text-white">Contact Us</a>
+							</li>
+						</ul>
+					</div>
+					<div class="col-md-4">
+						<h5>Contact</h5>
+						<ul class="list-unstyled">
+							<li>
+								<i class="fas fa-phone"></i> +263 123 456 789
+							</li>
+							<li>
+								<i class="fas fa-envelope"></i>
+								info@zimrentals.co.zw
+							</li>
+						</ul>
+					</div>
+				</div>
+				<hr />
+				<div class="text-center">
+					<p>
+						&copy; {% now "Y" %} Zim Rentals. All rights reserved.
+					</p>
+				</div>
+			</div>
+		</footer>
+
+		<!-- Bootstrap 5 JS Bundle -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+		<!-- Notification Script -->
+		{% if user.is_authenticated %}
+		<script src="{% static 'js/notifications.js' %}"></script>
+		{% endif %}
+
+		<!-- Maps utilities, if Google Maps API is loaded -->
+		{% if 'maps' in request.path or 'listing' in request.path %}
+		<!-- We're now creating maps directly in the template instead of using maps.js -->
+		<!-- <script src="{% static 'js/maps.js' %}"></script> -->
+		{% endif %} {% block extra_js %}{% endblock %}
+	</body>
+</html>

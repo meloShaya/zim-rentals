@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Sign Up - Zim Rentals{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<style>
+    .email-requirements {
+        background-color: #f8f9fa;
+        border-left: 4px solid #007bff;
+        padding: 15px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+    }
+    .email-requirements ul {
+        margin-bottom: 0;
+        padding-left: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Create Account</h1>
+            {% if request.GET.user_type == 'landlord' %}
+                <p>Sign up as a Landlord to list your properties</p>
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Note:</strong> Only landlord accounts can create property listings. 
+                    Renter accounts can browse, save favorites, and contact landlords.
+                </div>
+            {% else %}
+                <p>Join Zim Rentals to find or list properties</p>
+            {% endif %}
+        </div>
+        
+        <div class="email-requirements">
+            <h6><i class="fas fa-envelope me-2"></i>Email Verification Required</h6>
+            <ul>
+                <li>A valid email address is required</li>
+                <li>You must verify your email before accessing your account</li>
+                <li>Each email address can only be used for one account</li>
+            </ul>
+        </div>
+        
+        <form method="post" action="{% url 'account_signup' %}{% if request.GET.user_type %}?user_type={{ request.GET.user_type }}{% endif %}">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <p><strong>Please fix the following errors:</strong></p>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ field.label }}: {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {{ form|crispy }}
+            
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+            </div>
+            
+            <div class="auth-links">
+                <p>
+                    Already have an account? <a href="{% url 'account_login' %}">Login</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

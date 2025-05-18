@@ -1,0 +1,46 @@
+/* Social Sharing Buttons */
+.social-share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: white;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.social-share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: white;
+    text-decoration: none;
+}
+
+.social-share-btn i {
+    margin-right: 0.5rem;
+}
+
+.whatsapp-btn {
+    background-color: #25D366;
+}
+
+.facebook-btn {
+    background-color: #1877F2;
+}
+
+.twitter-btn {
+    background-color: #1DA1F2;
+}
+
+.email-btn {
+    background-color: #6c757d;
+}
+
+.share-count {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-left: 0.3rem;
+} 

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search Results - {{ saved_search.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'listings:saved_search_list' %}">My Saved Searches</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Results for "{{ saved_search.name }}"</li>
+                </ol>
+            </nav>
+            
+            <h1>Matches for "{{ saved_search.name }}"</h1>
+            <p class="text-muted">
+                <i class="fas fa-home me-2"></i>{{ count }} listing{{ count|pluralize }} match{{ count|pluralize:"es" }} your search criteria
+            </p>
+        </div>
+        <div class="col-md-4 text-end d-flex align-items-center justify-content-end">
+            <a href="{% url 'listings:saved_search_update' saved_search.pk %}" class="btn btn-sm btn-outline-primary me-2">
+                <i class="fas fa-edit"></i> Edit Search
+            </a>
+            <a href="{% url 'listings:saved_search_list' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Saved Searches
+            </a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Search Criteria</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        {% if saved_search.city %}
+                            <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i>City: {{ saved_search.get_city_display }}</li>
+                        {% endif %}
+                        
+                        {% if saved_search.suburb %}
+                            <li class="mb-2"><i class="fas fa-map me-2"></i>Suburb: {{ saved_search.suburb }}</li>
+                        {% endif %}
+                        
+                        {% if saved_search.property_type %}
+                            <li class="mb-2"><i class="fas fa-home me-2"></i>Type: {{ saved_search.get_property_type_display }}</li>
+                        {% endif %}
+                        
+                        {% if saved_search.min_price or saved_search.max_price %}
+                            <li class="mb-2"><i class="fas fa-dollar-sign me-2"></i>Price: 
+                                {% if saved_search.min_price %}${{ saved_search.min_price }}{% endif %}
+                                {% if saved_search.min_price and saved_search.max_price %} - {% endif %}
+                                {% if saved_search.max_price %}${{ saved_search.max_price }}{% endif %}
+                            </li>
+                        {% endif %}
+                        
+                        {% if saved_search.bedrooms %}
+                            <li class="mb-2"><i class="fas fa-bed me-2"></i>Bedrooms: {{ saved_search.bedrooms }}+</li>
+                        {% endif %}
+                        
+                        {% if saved_search.bathrooms %}
+                            <li class="mb-2"><i class="fas fa-bath me-2"></i>Bathrooms: {{ saved_search.bathrooms }}+</li>
+                        {% endif %}
+                        
+                        {% if saved_search.is_furnished is not None %}
+                            <li class="mb-2"><i class="fas fa-couch me-2"></i>Furnished: 
+                                {% if saved_search.is_furnished %}Yes{% else %}No{% endif %}
+                            </li>
+                        {% endif %}
+                    </ul>
+                    
+                    <div class="mt-3">
+                        <span class="badge {% if saved_search.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                            {% if saved_search.is_active %}
+                                <i class="fas fa-bell me-1"></i> Alerts Active
+                            {% else %}
+                                <i class="fas fa-bell-slash me-1"></i> Alerts Paused
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            {% if listings %}
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for listing in listings %}
+                        <div class="col">
+                            <div class="card h-100 shadow-sm">
+                                {% if listing.featured_image %}
+                                    <img src="{{ listing.featured_image.url }}" class="card-img-top" alt="{{ listing.title }}" style="height: 180px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-light" style="height: 180px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-home fa-3x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ listing.title }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-primary">${{ listing.price }}</h6>
+                                    <p class="card-text text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i> {{ listing.suburb }}, {{ listing.get_city_display }}
+                                    </p>
+                                    <p class="mb-0">
+                                        <span class="badge bg-secondary">{{ listing.get_property_type_display }}</span>
+                                        <span class="badge bg-secondary">{{ listing.bedrooms }} bed</span>
+                                        <span class="badge bg-secondary">{{ listing.bathrooms }} bath</span>
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-white">
+                                    <small class="text-muted">Listed {{ listing.created_at|date:"F j, Y" }}</small>
+                                    <a href="{% url 'listings:listing_detail' listing.pk %}" class="btn btn-sm btn-outline-primary float-end">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <h4 class="alert-heading"><i class="fas fa-info-circle me-2"></i> No matching listings found</h4>
+                    <p>There are currently no listings that match your search criteria. We'll notify you when new matching listings become available.</p>
+                    <hr>
+                    <p class="mb-0">
+                        <a href="{% url 'listings:saved_search_update' saved_search.pk %}" class="btn btn-primary">
+                            <i class="fas fa-edit me-1"></i> Edit Search Criteria
+                        </a>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

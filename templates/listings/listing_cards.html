@@ -1,0 +1,58 @@
+{% for listing in listings %}
+<div class="col-md-6 col-lg-4 mb-4 listing-card" data-id="{{ listing.id }}">
+    <div class="card property-card h-100 shadow-sm">
+        <div class="property-image-container">
+            {% if listing.images.first %}
+            <img src="{{ listing.images.first.image.url }}" class="card-img-top property-image" alt="{{ listing.title }}">
+            {% else %}
+            <div class="card-img-top property-image bg-light d-flex align-items-center justify-content-center">
+                <i class="fas fa-home fa-3x text-muted"></i>
+            </div>
+            {% endif %}
+            <span class="property-badge bg-primary">{{ listing.get_property_type_display }}</span>
+            {% if listing.landlord.is_verified_landlord %}
+            <span class="property-badge bg-success" style="left: 10px; right: auto;">
+                <i class="fas fa-shield-alt me-1"></i> Verified
+            </span>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title text-truncate">
+                {{ listing.title }}
+                {% if listing.landlord.is_verified_landlord %}
+                <i class="fas fa-shield-alt text-success ms-1" title="Listed by a verified landlord"></i>
+                {% endif %}
+            </h5>
+            <p class="card-text text-muted mb-1">
+                <i class="fas fa-map-marker-alt"></i> {{ listing.get_city_display }}, {{ listing.suburb }}
+            </p>
+            <div class="property-features mb-2">
+                <span class="me-2"><i class="fas fa-bed"></i> {{ listing.bedrooms }}</span>
+                <span class="me-2"><i class="fas fa-bath"></i> {{ listing.bathrooms }}</span>
+                {% if listing.is_furnished %}
+                <span><i class="fas fa-couch"></i> Furnished</span>
+                {% endif %}
+            </div>
+            <p class="card-text property-price">
+                <strong>{{ listing.currency }} {{ listing.price }}</strong> <small class="text-muted">/ month</small>
+            </p>
+        </div>
+        <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+                Listed {{ listing.created_at|timesince }} ago
+                {% if listing.landlord.is_verified_landlord %}
+                <span class="badge bg-success ms-1" title="Verified Landlord"><i class="fas fa-shield-alt"></i></span>
+                {% endif %}
+            </small>
+            <a href="{% url 'listings:listing_detail' listing.pk %}" class="btn btn-sm btn-primary">View Details</a>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="col-12">
+    <div class="alert alert-info">
+        <h5 class="alert-heading"><i class="fas fa-info-circle me-2"></i>No listings found</h5>
+        <p>No properties match your criteria. Try adjusting your filters or check back later for new listings.</p>
+    </div>
+</div>
+{% endfor %} 

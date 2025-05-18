@@ -1,0 +1,25 @@
+Zim Rentals - New Listings Alert
+
+Hello {{ user.first_name|default:user.username }},
+
+We found {{ listings_count }} new listing(s) that match your saved search criteria:
+
+Search Name: {{ saved_search.name }}
+
+New Matching Listings:
+{% for listing in listings %}
+- {{ listing.title }}
+  ${{ listing.price }} | {{ listing.suburb }}, {{ listing.get_city_display }}
+  {{ listing.get_property_type_display }} | {{ listing.bedrooms }} bed | {{ listing.bathrooms }} bath | {% if listing.is_furnished %}Furnished{% else %}Unfurnished{% endif %}
+  View at: http://{{ site.domain }}{% url 'listings:listing_detail' listing.id %}
+
+{% endfor %}
+
+View all matching listings:
+http://{{ site.domain }}{% url 'listings:saved_search_results' saved_search.id %}
+
+---
+You're receiving this email because you set up a price alert on Zim Rentals.
+To manage your alerts, visit: http://{{ site.domain }}{% url 'listings:saved_search_list' %}
+
+© {% now "Y" %} Zim Rentals. All rights reserved. 

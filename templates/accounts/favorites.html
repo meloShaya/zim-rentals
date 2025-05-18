@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}My Favorites - Zim Rentals{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title mb-0">My Favorite Listings</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for favorite in favorites %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card property-card h-100">
+                            {% if favorite.listing.images.first %}
+                            <img src="{{ favorite.listing.images.first.image.url }}" class="card-img-top property-image" alt="{{ favorite.listing.title }}">
+                            {% else %}
+                            <div class="card-img-top property-image bg-light d-flex align-items-center justify-content-center">
+                                <i class="fas fa-home fa-3x text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ favorite.listing.title }}</h5>
+                                <p class="card-text text-muted">
+                                    <i class="fas fa-map-marker-alt"></i> {{ favorite.listing.get_city_display }}, {{ favorite.listing.suburb }}
+                                </p>
+                                <p class="card-text">
+                                    <strong>{{ favorite.listing.currency }} {{ favorite.listing.price }}</strong> / month
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-primary">{{ favorite.listing.get_property_type_display }}</span>
+                                    <div>
+                                        <a href="{% url 'listings:listing_detail' favorite.listing.pk %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                                        <form method="post" action="{% url 'listings:toggle_favorite' favorite.listing.pk %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-heart"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            You haven't saved any listings to your favorites yet.
+                            <a href="{% url 'listings:listing_list' %}" class="alert-link">Browse available listings</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

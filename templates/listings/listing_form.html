@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if listing %}Edit{% else %}Create{% endif %} Listing - Zim Rentals{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title mb-0">{% if listing %}Edit{% else %}Create{% endif %} Listing</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            {% if listing %}Update{% else %}Create{% endif %} Listing
+                        </button>
+                        <a href="{% if listing %}{% url 'listings:listing_detail' listing.pk %}{% else %}{% url 'listings:listing_list' %}{% endif %}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Define a callback for when the marker is dragged
+        window.markerDragCallback = function(position) {
+            document.getElementById("id_location").value = position.lat() + "," + position.lng();
+        };
+        
+        // Wait for Maps API to load then initialize map
+        waitForGoogleMapsToLoad(function() {
+            // Default to Harare coordinates
+            const latitude = -17.824858;
+            const longitude = 31.053028;
+            const title = "Property Location";
+            
+            // Initialize map with draggable marker
+            initializeMap('id_location', latitude, longitude, title, true);
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %} 
