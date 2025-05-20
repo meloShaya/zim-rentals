@@ -4,7 +4,7 @@ import os
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['homemarketplace.co.zw', 'www.homemarketplace.co.zw']
 
 ADMINS = [('melo shaya', 'shayanewakomelody02@gmail.com')]
 
