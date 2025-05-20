@@ -1,8 +1,18 @@
 from .base import *
 import os
+from django.core.exceptions import ImproperlyConfigured
 # import dj_database_url
 
 DEBUG = False
+
+# Security
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+
+# Ensure we have a secure SECRET_KEY for production
+if not os.getenv('SECRET_KEY'):
+    raise ImproperlyConfigured("SECRET_KEY environment variable is required for production")
 
 ALLOWED_HOSTS = ['homemarketplace.co.zw', 'www.homemarketplace.co.zw']
 

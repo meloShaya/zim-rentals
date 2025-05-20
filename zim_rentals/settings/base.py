@@ -26,7 +26,7 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-gy$hs=hs$hs$hs$hs$hs$hs$hs$hs$hs$hs$hs$hs$hs$hs$'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
@@ -181,9 +181,11 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = 1
 
 # Allauth settings
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = True
+# ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Deprecated
+ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+# ACCOUNT_EMAIL_REQUIRED = True  # Deprecated
+# ACCOUNT_USERNAME_REQUIRED = True  # Deprecated
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGOUT_ON_GET = True
@@ -198,16 +200,17 @@ ACCOUNT_USERNAME_BLACKLIST = ['admin', 'administrator', 'root', 'superuser']
 ACCOUNT_EMAIL_SUBJECT_PREFIX = '[Zim Rentals] '
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'  # Changed from 'https' to 'http' for development
 ACCOUNT_RATE_LIMITS = {
-    'login_failed': '5/m',  # 5 attempts per minute
+    'login_failed': '5/300s',  # 5 attempts per 5 minutes (replacing ACCOUNT_LOGIN_ATTEMPTS_LIMIT and TIMEOUT)
+    'confirm_email': '1/180s',  # 1 attempt per 3 minutes (replacing ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN)
 }
+# ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5  # Deprecated
+# ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300  # 5 minutes - Deprecated
+# ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN = 180  # 3 minutes - Deprecated
 ACCOUNT_PASSWORD_RESET_TIMEOUT = 86400  # 24 hours
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 ACCOUNT_EMAIL_CONFIRMATION_HMAC = True
-ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN = 180  # 3 minutes
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_PREVENT_ENUMERATION = True
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
-ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300  # 5 minutes
 
 # Login/Logout URLs
 LOGIN_URL = '/accounts/login/'

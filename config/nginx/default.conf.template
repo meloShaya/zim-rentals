@@ -3,23 +3,61 @@
 upstream uwsgi_app {
     server unix:/code/uwsgi_app.sock;
 }
+
+# upstream for Daphne
+upstream daphne {
+    server unix:/code/daphne.sock;
+}
+
 server {
     listen       80;
+    server_name www.homemarketplace.co.zw homemarketplace.co.zw;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen      443 ssl;
+    ssl_certificate      /code/zim_rentals/ssl/zim_rentals.crt;
+    ssl_certificate_key  /code/zim_rentals/ssl/zim_rentals.key;
     server_name  www.homemarketplace.co.zw homemarketplace.co.zw;
     error_log    stderr warn;
     access_log  /dev/stdout main;
+    client_max_body_size 10M;
 
     location / {
         include     /etc/nginx/uwsgi_params;
         uwsgi_pass  uwsgi_app;
+        uwsgi_read_timeout 300;
+        
+        # For debugging
+        error_page 502 = @fallback;
+    }
+    
+    location @fallback {
+        proxy_pass http://web:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /ws/ {
+        proxy_http_version   1.1;
+        proxy_set_header     Upgrade $http_upgrade;
+        proxy_set_header     Connection "upgrade";
+        proxy_set_header     Host $host;
+        proxy_redirect       off;
+        proxy_pass           http://daphne;
     }
 
     location /static/ {
         alias /code/staticfiles/;
+        expires 30d;
+        access_log off;
     }
     
     location /media/ {
         alias /code/media/;
+        expires 30d;
+        access_log off;
     }
 }
 

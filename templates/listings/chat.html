@@ -128,7 +128,7 @@
             chatSocket.close();
         }
 
-        const wsUrl = 'ws://' + window.location.host + '/ws/chat/' + listingId + '/';
+        const wsUrl = 'wss://' + window.location.host + '/ws/chat/' + listingId + '/';
         console.log('Attempting to connect to WebSocket:', wsUrl);
 
         chatSocket = new WebSocket(wsUrl);

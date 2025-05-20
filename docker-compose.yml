@@ -25,6 +25,7 @@ services:
                 "uwsgi",
                 "--ini",
                 "/code/config/uwsgi/uwsgi.ini",
+                "--http=0.0.0.0:8000",
                 "--logto=/code/uwsgi.log",
             ]
         restart: always
@@ -49,6 +50,32 @@ services:
             - .:/code
         ports:
             - "8080:80"
+            - "443:443"
+
+    daphne:
+        build: .
+        working_dir: /code
+        command:
+            [
+                "./wait-for-it.sh",
+                "db:5432",
+                "--",
+                "daphne",
+                "-u",
+                "/code/daphne.sock",
+                "zim_rentals.asgi:application",
+            ]
+        restart: always
+        volumes:
+            - .:/code
+        environment:
+            - DJANGO_SETTINGS_MODULE=zim_rentals.settings.prod
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        depends_on:
+            - db
+            - cache
 #             - DATABASE_URL=sqlite:///db.sqlite3
 #         depends_on:
 #             - db
