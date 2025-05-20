@@ -33,7 +33,7 @@ class Listing(models.Model):
     landlord = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listings')
     title = models.CharField(max_length=200)
     description = models.TextField()
-    property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
+    property_type = models.CharField(max_length=100, choices=PROPERTY_TYPES)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default='USD')
     city = models.CharField(max_length=20, choices=CITIES)
@@ -197,7 +197,7 @@ class SavedSearch(models.Model):
     name = models.CharField(max_length=100, help_text="Name this search for your reference")
     city = models.CharField(max_length=20, choices=Listing.CITIES, blank=True, null=True)
     suburb = models.CharField(max_length=100, blank=True, null=True)
-    property_type = models.CharField(max_length=20, choices=Listing.PROPERTY_TYPES, blank=True, null=True)
+    property_type = models.CharField(max_length=100, choices=Listing.PROPERTY_TYPES, blank=True, null=True)
     max_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     min_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     bedrooms = models.PositiveIntegerField(blank=True, null=True)
@@ -249,7 +249,7 @@ class SavedSearch(models.Model):
             
         if self.is_furnished is not None:
             filters['is_furnished'] = self.is_furnished
-            
+        
         # Only get listings created after the specified time
         if since_datetime:
             filters['created_at__gt'] = since_datetime
