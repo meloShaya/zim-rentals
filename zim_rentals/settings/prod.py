@@ -16,7 +16,15 @@ if not os.getenv('SECRET_KEY'):
 
 ALLOWED_HOSTS = ['homemarketplace.onrender.com',
                  'homemarketplace.co.zw', 
-                 'www.homemarketplace.co.zw']
+                 'www.homemarketplace.co.zw',
+                 'localhost',
+                 '127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://homemarketplace.co.zw',
+    'http://localhost:8080',
+    'http://127.0.0.1:8080',
+]
 
 ADMINS = [('melo shaya', 'shayanewakomelody02@gmail.com')]
 

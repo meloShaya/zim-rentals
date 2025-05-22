@@ -25,10 +25,10 @@ RUN pip install -r requirements.txt
 COPY . /code/
 
 # Expose port 8000
-EXPOSE 8000
+# EXPOSE 8000
 
 # Run entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
 
 # Run Gunicorn
-CMD ["gunicorn", "zim_rentals.wsgi:application", "--bind", "0.0.0.0:8000"]
+# CMD ["gunicorn", "zim_rentals.wsgi:application", "--bind", "0.0.0.0:8000"]
