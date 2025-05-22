@@ -32,19 +32,16 @@ ADMINS = [('melo shaya', 'shayanewakomelody02@gmail.com')]
 
 # Configure database using DATABASE_URL environment variable
 # DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3')
+database_url = os.environ.get('DATABASE_URL')
+if not database_url:
+    raise ImproperlyConfigured("DATABASE_URL environment variable is not set.")
+
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': os.environ.get('POSTGRES_DB'),
-    #     'USER': os.environ.get('POSTGRES_USER'),
-    #     'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-    #     'HOST': 'db',
-    #     'PORT': 5432,
-    # }
-     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'), 
+    'default': dj_database_url.config(
+        default=database_url,
+        conn_max_age=600, # Optional: set connection max age
+        engine='django.db.backends.postgresql' # Explicitly set engine
     )
-    # 'default': dj_database_url.parse(DATABASE_URL)
 }
         
 
