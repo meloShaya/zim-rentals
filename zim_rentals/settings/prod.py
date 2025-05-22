@@ -1,9 +1,9 @@
 from .base import *
 import os
 from django.core.exceptions import ImproperlyConfigured
-# import dj_database_url
+import dj_database_url
 
-DEBUG = False
+DEBUG = True
 
 # Security
 CSRF_COOKIE_SECURE = True
@@ -23,6 +23,7 @@ ALLOWED_HOSTS = ['homemarketplace.onrender.com',
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',
     'https://homemarketplace.co.zw',
+    'https://www.homemarketplace.co.zw'
     'http://localhost:8080',
     'http://127.0.0.1:8080',
 ]
@@ -32,17 +33,17 @@ ADMINS = [('melo shaya', 'shayanewakomelody02@gmail.com')]
 # Configure database using DATABASE_URL environment variable
 # DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3')
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': 'db',
-        'PORT': 5432,
-    }
-    #  'default': dj_database_url.config(
-    #     default=os.environ.get('DATABASE_URL'), 
-    # )
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': os.environ.get('POSTGRES_DB'),
+    #     'USER': os.environ.get('POSTGRES_USER'),
+    #     'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+    #     'HOST': 'db',
+    #     'PORT': 5432,
+    # }
+     'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'), 
+    )
     # 'default': dj_database_url.parse(DATABASE_URL)
 }
         
