@@ -14,7 +14,9 @@ SECURE_SSL_REDIRECT = True
 if not os.getenv('SECRET_KEY'):
     raise ImproperlyConfigured("SECRET_KEY environment variable is required for production")
 
-ALLOWED_HOSTS = ['homemarketplace.co.zw', 'www.homemarketplace.co.zw']
+ALLOWED_HOSTS = ['homemarketplace.onrender.com',
+                 'homemarketplace.co.zw', 
+                 'www.homemarketplace.co.zw']
 
 ADMINS = [('melo shaya', 'shayanewakomelody02@gmail.com')]
 

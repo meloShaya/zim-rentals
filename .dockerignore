@@ -1,0 +1,9 @@
+.git
+.venv
+venv
+__pycache__
+*.pyc
+*.sqlite3
+*.db
+.env
+*/.ipynb_checkpoints

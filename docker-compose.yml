@@ -61,13 +61,17 @@ services:
                 "db:5432",
                 "--",
                 "daphne",
-                "-u",
-                "/code/daphne.sock",
+                "-p",
+                "8001",
+                "-b",
+                "0.0.0.0",
                 "zim_rentals.asgi:application",
             ]
         restart: always
         volumes:
             - .:/code
+        ports:
+            - "8001:8001"
         environment:
             - DJANGO_SETTINGS_MODULE=zim_rentals.settings.prod
             - POSTGRES_DB=postgres
