@@ -21,6 +21,7 @@ ALLOWED_HOSTS = ['homemarketplace.onrender.com',
                  '127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com',
     'https://homemarketplace.co.zw',
     'http://localhost:8080',
     'http://127.0.0.1:8080',
@@ -39,6 +40,9 @@ DATABASES = {
         'HOST': 'db',
         'PORT': 5432,
     }
+    #  'default': dj_database_url.config(
+    #     default=os.environ.get('DATABASE_URL'), 
+    # )
     # 'default': dj_database_url.parse(DATABASE_URL)
 }
         
