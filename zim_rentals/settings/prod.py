@@ -23,7 +23,7 @@ ALLOWED_HOSTS = ['homemarketplace.onrender.com',
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',
     'https://homemarketplace.co.zw',
-    'https://www.homemarketplace.co.zw'
+    'https://www.homemarketplace.co.zw',
     'http://localhost:8080',
     'http://127.0.0.1:8080',
 ]
