@@ -44,7 +44,33 @@ DATABASES = {
     )
 }
         
+# Redis configuration
+redis_url_from_env = os.environ.get('REDIS_URL')
+if not redis_url_from_env:
+    raise ImproperlyConfigured("REDIS_URL environment variable is not set for production.")
 
-REDIS_URL = 'redis://cache:6379'
-CACHES['default']['LOCATION'] = REDIS_URL
-CHANNEL_LAYERS['default']['CONFIG']['hosts'] = [REDIS_URL]
+CACHES['default']['LOCATION'] = redis_url_from_env
+
+# Ensure CHANNEL_LAYERS is defined before trying to modify it (it should be imported from base.py)
+if 'CHANNEL_LAYERS' not in locals() or not isinstance(CHANNEL_LAYERS, dict):
+    # This case should ideally not be hit if base.py properly defines CHANNEL_LAYERS
+    # Or if you need a default structure for prod if not in base:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [],
+            },
+        },
+    }
+
+# Ensure the 'default' key and 'CONFIG' key exist
+if 'default' not in CHANNEL_LAYERS:
+    CHANNEL_LAYERS['default'] = {'CONFIG': {'hosts': []}}
+elif 'CONFIG' not in CHANNEL_LAYERS['default']:
+    CHANNEL_LAYERS['default']['CONFIG'] = {'hosts': []}
+
+CHANNEL_LAYERS['default']['CONFIG']['hosts'] = [redis_url_from_env]
+
+# Remove the old REDIS_URL variable if it was just for default fallback
+# REDIS_URL = 'redis://cache:6379' # This line can be removed if REDIS_URL is always from env
