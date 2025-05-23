@@ -14,7 +14,7 @@ SECURE_SSL_REDIRECT = True
 if not os.getenv('SECRET_KEY'):
     raise ImproperlyConfigured("SECRET_KEY environment variable is required for production")
 
-ALLOWED_HOSTS = ['homemarketplace.onrender.com',
+ALLOWED_HOSTS = ['home-market-place.onrender.com',
                  'homemarketplace.co.zw', 
                  'www.homemarketplace.co.zw',
                  'localhost',
