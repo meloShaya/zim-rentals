@@ -160,7 +160,7 @@ This setup is for developers who prefer to manage services like Python, PostgreS
         (Access at `http://localhost:8000` or the port shown)
     -   For Daphne (to support WebSockets for chat/notifications):
         ```bash
-        daphne -p 8000 zim_rentals.asgi:application
+        export DJANGO_SETTINGS_MODULE=zim_rentals.settings.local && daphne -b 0.0.0.0 -p 8000 zim_rentals.asgi:application
         ```
         (Access at `http://localhost:8000`)
 

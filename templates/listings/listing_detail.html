@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% load crispy_forms_tags %} {% load static %} 
 
-{%block title %}{{ listing.title }} - Zim Rentals{% endblock %} {% block content%}
+{%block title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 <div class="container mt-4">
 	<div class="row">
 		<div class="col-md-8">
@@ -179,7 +179,7 @@
 					</p>
 					<div class="d-flex gap-2">
 						<!-- WhatsApp Share Button -->
-						{% with whatsapp_message="Found a great place in"|add:listing.get_city_display|add:" for $"|add:listing.price|stringformat:"g"|add:"! Check it on Zim Rentals:" %}
+						{% with whatsapp_message="Found a great place in"|add:listing.get_city_display|add:" for $"|add:listing.price|stringformat:"g"|add:"! Check it on Home Marketplace:" %}
 						<a
 							href="https://wa.me/?text={{ whatsapp_message|urlencode }}%20{{ request.build_absolute_uri }}%3Futm_source%3Dwhatsapp%26utm_medium%3Dsocial%26utm_campaign%3Dlisting_share"
 							target="_blank"
@@ -201,7 +201,7 @@
 						</a>
 
 						<!-- Twitter/X Share Button -->
-						{% with twitter_message="Found a great place in"|add:listing.get_city_display|add:" for	$"|add:listing.price|stringformat:"g"|add:"! Check it on Zim Rentals:" %}
+						{% with twitter_message="Found a great place in"|add:listing.get_city_display|add:" for	$"|add:listing.price|stringformat:"g"|add:"! Check it on Home Marketplace:" %}
 						<a
 							href="https://twitter.com/intent/tweet?text={{ twitter_message|urlencode }}&url={{ request.build_absolute_uri }}%3Futm_source%3Dtwitter%26utm_medium%3Dsocial%26utm_campaign%3Dlisting_share"
 							target="_blank"
@@ -213,7 +213,7 @@
 						{% endwith %}
 
 						<!-- Email Share Button -->
-						{% with email_subject="Great property listing on ZimRentals"|urlencode %} 
+						{% with email_subject="Great property listing on Home Marketplaces"|urlencode %} 
 						{% with email_body="Hey, I found this great place in "|add:listing.get_city_display|add:" for $"|add:listing.price|stringformat:"g"|add:"! Check it out:	"|add:request.build_absolute_uri|add:"?utm_source=email&utm_medium=social&utm_campaign=listing_share"|urlencode	%}
 						<a
 							href="mailto:?subject={{ email_subject }}&body={{ email_body }}"

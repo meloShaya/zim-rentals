@@ -1,4 +1,4 @@
-Zim Rentals - New Listings Alert
+Home Marketplace - New Listings Alert
 
 Hello {{ user.first_name|default:user.username }},
 
@@ -19,7 +19,7 @@ View all matching listings:
 http://{{ site.domain }}{% url 'listings:saved_search_results' saved_search.id %}
 
 ---
-You're receiving this email because you set up a price alert on Zim Rentals.
+You're receiving this email because you set up a price alert on Home Marketplace.
 To manage your alerts, visit: http://{{ site.domain }}{% url 'listings:saved_search_list' %}
 
-© {% now "Y" %} Zim Rentals. All rights reserved. 
+© {% now "Y" %} Home Marketplace. All rights reserved. 

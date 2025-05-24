@@ -5,15 +5,15 @@
 
 Hello {{ user_display }},
 
-Thank you for signing up for Zim Rentals!
+Thank you for signing up for Home Marketplace!
 
-To activate your account and verify your email address, please confirm that you want to use this email address for your Zim Rentals account by clicking the link below:
+To activate your account and verify your email address, please confirm that you want to use this email address for your Home Marketplace account by clicking the link below:
 
 {{ activate_url }}
 
 This link will expire in {{ expiry_days }} days.
 
-After verification, you'll be able to log in and use all features of Zim Rentals:
+After verification, you'll be able to log in and use all features of Home Marketplace:
 - Browse rental properties
 - Contact landlords
 - Save your favorite listings
@@ -22,9 +22,9 @@ After verification, you'll be able to log in and use all features of Zim Rentals
 - Manage your listings
 {% endif %}
 
-If you did not create an account at Zim Rentals, you can safely ignore this email.
+If you did not create an account at Home Marketplace, you can safely ignore this email.
 
 Thank you,
-The Zim Rentals Team
+The Home Marketplace Team
 
 {% endautoescape %} 

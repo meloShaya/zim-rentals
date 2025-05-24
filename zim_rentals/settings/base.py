@@ -112,12 +112,14 @@ WSGI_APPLICATION = 'zim_rentals.wsgi.application'
 #     }
 # }
 
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': 'redis://127.0.0.1:6379',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -207,7 +209,7 @@ ACCOUNT_FORMS = {
 ACCOUNT_USERNAME_MIN_LENGTH = 3
 ACCOUNT_PASSWORD_MIN_LENGTH = 8
 ACCOUNT_USERNAME_BLACKLIST = ['admin', 'administrator', 'root', 'superuser']
-ACCOUNT_EMAIL_SUBJECT_PREFIX = '[Zim Rentals] '
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[Home Marketplace] '
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'  # Changed from 'https' to 'http' for development
 ACCOUNT_RATE_LIMITS = {
     'login_failed': '5/300s',  # 5 attempts per 5 minutes (replacing ACCOUNT_LOGIN_ATTEMPTS_LIMIT and TIMEOUT)
@@ -227,15 +229,28 @@ LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Email settings for development
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = os.getenv('EMAIL_PORT')
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+# Email settings
+# When using django-ses with SES API (Boto3), these are the primary settings from environment:
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND') # Should be 'django_ses.SESBackend'
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID') # For django-ses
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY') # For django-ses
+AWS_SES_REGION_NAME = os.getenv('AWS_SES_REGION_NAME') # For django-ses, e.g., 'eu-north-1'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL') # Must be a verified SES identity
+AWS_SES_AUTO_THROTTLE = float(os.getenv('AWS_SES_AUTO_THROTTLE', 0.5)) # Example, ensure it's a float
+
+# The following are standard Django SMTP settings. 
+# If EMAIL_BACKEND is 'django_ses.SESBackend', these are typically NOT used by django-ses for API calls.
+# If you were to switch EMAIL_BACKEND to 'django.core.mail.backends.smtp.EmailBackend' 
+# to use SES via SMTP, then you would configure these:
+# EMAIL_HOST = os.getenv('EMAIL_HOST') # e.g., 'email-smtp.eu-north-1.amazonaws.com'
+# EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+# EMAIL_USE_TLS = str(os.getenv('EMAIL_USE_TLS', 'True')).lower() == 'true'
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER') # SES SMTP username
+# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD') # SES SMTP password
+
+# django-ses specific settings (optional, have defaults)
+# AWS_SES_CONFIGSET = os.getenv('AWS_SES_CONFIGSET') # If you use SES Configuration Sets
+# AWS_SES_RETURN_PATH = os.getenv('AWS_SES_RETURN_PATH') # If you need a custom return path
 
 # Geoposition settings
 GEOPOSITION_GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
