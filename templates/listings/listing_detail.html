@@ -1,6 +1,5 @@
-{% extends 'base.html' %} {% load crispy_forms_tags %} {% load static %} 
-
-{%block title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
+{% extends 'base.html' %} {% load crispy_forms_tags %} {% load static %} {%block
+title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 <div class="container mt-4">
 	<div class="row">
 		<div class="col-md-8">
@@ -47,7 +46,8 @@
 								class="d-block w-100"
 								alt="{{ listing.title }}"
 							/>
-							{% if listing.landlord.is_verified_landlord and forloop.first and not listing.featured_image %}
+							{% if listing.landlord.is_verified_landlord and
+							forloop.first and not listing.featured_image %}
 							<div
 								class="carousel-caption"
 								style="
@@ -101,8 +101,8 @@
 			<div class="card mb-4">
 				<div class="card-body">
 					<h1 class="card-title">
-						{{ listing.title }} 
-						{% if listing.landlord.is_verified_landlord %}
+						{{ listing.title }} {% if
+						listing.landlord.is_verified_landlord %}
 						<span class="badge bg-success ms-2">
 							<i class="fas fa-shield-alt me-1"></i> Verified
 							Landlord
@@ -124,10 +124,12 @@
 								{{ listing.get_property_type_display }}
 							</p>
 							<p>
-								<strong>Bedrooms:</strong> {{ listing.bedrooms }}
+								<strong>Bedrooms:</strong> {{ listing.bedrooms
+								}}
 							</p>
 							<p>
-								<strong>Bathrooms:</strong> {{ listing.bathrooms }}
+								<strong>Bathrooms:</strong> {{ listing.bathrooms
+								}}
 							</p>
 							<p>
 								<strong>Furnished:</strong>
@@ -159,7 +161,8 @@
 							</ul>
 							<p>
 								<strong>Status:</strong>
-								{% if listing.is_available %} Available {% else	%} Not Available {% endif %}
+								{% if listing.is_available %} Available {% else
+								%} Not Available {% endif %}
 							</p>
 						</div>
 					</div>
@@ -177,14 +180,18 @@
 						Help others find this property by sharing it on social
 						media:
 					</p>
-					<div class="d-flex gap-2">
+					<div class="d-flex flex-wrap gap-2 share-buttons-container">
 						<!-- WhatsApp Share Button -->
-						{% with whatsapp_message="Found a great place in"|add:listing.get_city_display|add:" for $"|add:listing.price|stringformat:"g"|add:"! Check it on Home Marketplace:" %}
+						{% with whatsapp_message="Found a great place
+						in"|add:listing.get_city_display|add:" for
+						$"|add:listing.price|floatformat:"-2g"|add:"! Check it
+						on Home Marketplace:" %}
+
 						<a
 							href="https://wa.me/?text={{ whatsapp_message|urlencode }}%20{{ request.build_absolute_uri }}%3Futm_source%3Dwhatsapp%26utm_medium%3Dsocial%26utm_campaign%3Dlisting_share"
 							target="_blank"
 							rel="noopener"
-							class="btn btn-success"
+							class="btn btn-success social-share-btn"
 						>
 							<i class="fab fa-whatsapp me-2"></i>WhatsApp
 						</a>
@@ -195,29 +202,39 @@
 							href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}%3Futm_source%3Dfacebook%26utm_medium%3Dsocial%26utm_campaign%3Dlisting_share"
 							target="_blank"
 							rel="noopener"
-							class="btn btn-primary"
+							class="btn btn-primary social-share-btn"
 						>
 							<i class="fab fa-facebook-f me-2"></i>Facebook
 						</a>
 
 						<!-- Twitter/X Share Button -->
-						{% with twitter_message="Found a great place in"|add:listing.get_city_display|add:" for	$"|add:listing.price|stringformat:"g"|add:"! Check it on Home Marketplace:" %}
+						{% with twitter_message="Found a great place
+						in"|add:listing.get_city_display|add:" for
+						$"|add:listing.price|floatformat:"-2g"|add:"! Check it
+						on Home Marketplace:" %}
+
 						<a
 							href="https://twitter.com/intent/tweet?text={{ twitter_message|urlencode }}&url={{ request.build_absolute_uri }}%3Futm_source%3Dtwitter%26utm_medium%3Dsocial%26utm_campaign%3Dlisting_share"
 							target="_blank"
 							rel="noopener"
-							class="btn btn-info"
+							class="btn btn-info social-share-btn"
 						>
 							<i class="fab fa-twitter me-2"></i>Twitter/X
 						</a>
 						{% endwith %}
 
 						<!-- Email Share Button -->
-						{% with email_subject="Great property listing on Home Marketplaces"|urlencode %} 
-						{% with email_body="Hey, I found this great place in "|add:listing.get_city_display|add:" for $"|add:listing.price|stringformat:"g"|add:"! Check it out:	"|add:request.build_absolute_uri|add:"?utm_source=email&utm_medium=social&utm_campaign=listing_share"|urlencode	%}
+						{% with email_subject="Great property listing on Home
+						Marketplaces"|urlencode %} {% with email_body="Hey, I
+						found this great place in
+						"|add:listing.get_city_display|add:" for
+						$"|add:listing.price|stringformat:"g"|add:"! Check it
+						out:
+						"|add:request.build_absolute_uri|add:"?utm_source=email&utm_medium=social&utm_campaign=listing_share"|urlencode
+						%}
 						<a
 							href="mailto:?subject={{ email_subject }}&body={{ email_body }}"
-							class="btn btn-secondary"
+							class="btn btn-secondary social-share-btn"
 						>
 							<i class="fas fa-envelope me-2"></i>Email
 						</a>
@@ -231,7 +248,8 @@
 			<div class="card mb-4">
 				<div class="card-body">
 					<h4>
-						Contact Information {% if listing.landlord.is_verified_landlord %}
+						Contact Information {% if
+						listing.landlord.is_verified_landlord %}
 						<span class="badge bg-success float-end">
 							<i class="fas fa-shield-alt me-1"></i> Verified
 						</span>
@@ -273,9 +291,31 @@
 							>{{ listing.whatsapp_number }}</span
 						>
 					</div>
-					{% endif %} 
-					{% if not listing.phone_number and not isting.whatsapp_number %}
-					<p class="text-muted">No contact information provided</p>
+					{% endif %}
+
+					<!-- Moved Chat with Landlord Button -->
+					{% if user != listing.landlord %}
+					<a
+						href="{% url 'listings:chat' listing.pk %}"
+						class="btn btn-primary w-100 w-sm-auto mb-3 mb-sm-0"
+					>
+						<i class="fas fa-comments"></i> Chat with Landlord
+					</a>
+					{% endif %}
+					<!-- End Moved Chat with Landlord Button -->
+
+					{% if not listing.phone_number and not
+					listing.whatsapp_number and user == listing.landlord %}
+					<p class="text-muted">
+						You have not provided contact information for this
+						listing.
+					</p>
+					{% elif not listing.phone_number and not
+					listing.whatsapp_number and user != listing.landlord %}
+					<p class="text-muted">
+						The landlord has not provided public contact
+						information. Please use the chat.
+					</p>
 					{% endif %} {% else %}
 					<div class="alert alert-info">
 						<p class="mb-0">
@@ -422,19 +462,31 @@
 	        const map = new google.maps.Map(mapDiv, {
 	            center: { lat: latitude, lng: longitude },
 	            zoom: 15,
+	               mapId: 'c3bd4e6e621db04fe7825672',
 	            mapTypeControl: true,
 	            streetViewControl: true,
 	            fullscreenControl: true,
 	        });
 
-	        // Add a marker
-	        const marker = new google.maps.Marker({
-	            position: { lat: latitude, lng: longitude },
-	            map: map,
-	            title: title
-	        });
+	        // Add a marker using AdvancedMarkerElement if available, else fallback to Marker
+	        let markerInstance; // Renamed to avoid conflict with google.maps.marker library
+	        if (google.maps.marker && google.maps.marker.AdvancedMarkerElement) {
+	               console.log('Using AdvancedMarkerElement for listing detail map.');
+	            markerInstance = new google.maps.marker.AdvancedMarkerElement({
+	                position: { lat: latitude, lng: longitude },
+	                map: map,
+	                title: title
+	            });
+	        } else {
+	               console.log('Falling back to google.maps.Marker for listing detail map.');
+	            markerInstance = new google.maps.Marker({
+	                position: { lat: latitude, lng: longitude },
+	                map: map,
+	                title: title
+	            });
+	        }
 
-	        console.log('Map created successfully');
+	        console.log('Map created successfully with marker:', markerInstance);
 	    } catch (error) {
 	        console.error('Error creating map:', error);
 	        mapDiv.innerHTML =
@@ -457,11 +509,8 @@
 	                console.log('Google Maps API not available - loading it directly');
 	                // Create and load Google Maps API script manually
 	                const script = document.createElement('script');
-	                script.src = "https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}";
-	                script.onload = function() {
-	                    console.log('Google Maps API loaded directly!');
-	                    initPageMap();
-	                };
+	                // Ensure the marker library is loaded in this fallback too
+	                script.src = "https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=marker&callback=initPageMap";
 	                script.onerror = function() {
 	                    console.error('Direct Google Maps API load failed');
 	                    mapDiv.innerHTML =

@@ -7,12 +7,12 @@ from api.serializers.listing_serializers import (
     ListingSerializer, ListingDetailSerializer, ListingImageSerializer,
     FavoriteSerializer, ChatMessageSerializer
 )
-from api.permissions import IsOwnerOrReadOnly, IsChatMessageParticipant
+from api.permissions import IsOwnerOrReadOnly, IsChatMessageParticipant, IsLandlordUser
 
 class ListingViewSet(viewsets.ModelViewSet):
     queryset = Listing.objects.all().order_by('-created_at')
     serializer_class = ListingSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsLandlordUser, IsOwnerOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['city', 'suburb', 'property_type', 'bedrooms', 'price', 'status']
     search_fields = ['title', 'description', 'city', 'suburb']

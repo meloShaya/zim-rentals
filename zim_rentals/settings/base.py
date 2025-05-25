@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'django_filters',
-    # 'debug_toolbar', # Conditionally added below
+    'debug_toolbar', # Conditionally added below
     
     # Local apps
     'accounts',
@@ -67,7 +67,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware', # Conditionally added below
+    'debug_toolbar.middleware.DebugToolbarMiddleware', # Conditionally added below
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -81,9 +81,9 @@ MIDDLEWARE = [
 ]
 
 # Conditionally add Django Debug Toolbar
-if DEBUG:
-    INSTALLED_APPS.append('debug_toolbar')
-    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware') # Insert at the beginning
+# if DEBUG:
+#     INSTALLED_APPS.append('debug_toolbar')
+#     MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware') # Insert at the beginning
 
 ROOT_URLCONF = 'zim_rentals.urls'
 

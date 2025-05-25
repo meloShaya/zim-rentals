@@ -35,4 +35,12 @@ class IsChatMessageParticipant(permissions.BasePermission):
             # For the chat model in this app, the user is always the sender
             # The listing owner is the implicit recipient
             return obj.user == request.user or obj.listing.landlord == request.user
-        return False 
+        return False
+
+class IsLandlordUser(permissions.BasePermission):
+    """
+    Custom permission to only allow users with user_type 'landlord' to perform an action.
+    """
+    def has_permission(self, request, view):
+        # Check if the user is authenticated and if their user_type is 'landlord'.
+        return request.user and request.user.is_authenticated and request.user.user_type == 'landlord' 

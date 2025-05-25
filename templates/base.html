@@ -18,6 +18,25 @@
 		/>
 		<!-- Custom CSS -->
 		<style>
+			/* Sticky Footer Styles */
+			html,
+			body {
+				height: 100%;
+				margin: 0; /* Reset default margin */
+			}
+
+			body {
+				display: flex;
+				flex-direction: column;
+				min-height: 100vh; /* Ensure body takes at least full viewport height */
+			}
+
+			main.container.my-4 {
+				/* Targeting the main content block specifically */
+				flex-grow: 1;
+			}
+			/* End Sticky Footer Styles */
+
 			.navbar-brand {
 				font-weight: bold;
 			}
@@ -73,7 +92,7 @@
 		</script>
 		<script
 			id="google-maps-api"
-			src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMapGlobal"
+			src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=marker&callback=initMapGlobal"
 			onerror="googleMapsLoadError()"
 		></script>
 		{% endif %}
@@ -111,7 +130,8 @@
 								>Find Roommate</a
 							>
 						</li>
-						{% if user.is_authenticated and user.user_type == 'landlord' %}
+						{% if user.is_authenticated and user.user_type ==
+						'landlord' %}
 						<li class="nav-item">
 							<a
 								class="nav-link"
@@ -136,8 +156,8 @@
 								class="nav-link"
 								href="{% url 'listings:landlord_messages' %}"
 							>
-								<i class="fas fa-envelope"></i> Messages 
-								{% if unread_messages_count > 0 %}
+								<i class="fas fa-envelope"></i> Messages {% if
+								unread_messages_count > 0 %}
 								<span class="badge bg-danger"
 									>{{ unread_messages_count }}</span
 								>
@@ -170,7 +190,8 @@
 										>Favorites</a
 									>
 								</li>
-								{% endif %} {% if user.user_type == 'landlord' and not user.is_verified_landlord %}
+								{% endif %} {% if user.user_type == 'landlord'
+								and not user.is_verified_landlord %}
 								<li>
 									<a
 										class="dropdown-item"
@@ -276,7 +297,8 @@
 				<hr />
 				<div class="text-center">
 					<p>
-						&copy; {% now "Y" %} Home Marketplace. All rights reserved.
+						&copy; {% now "Y" %} Home Marketplace. All rights
+						reserved.
 					</p>
 				</div>
 			</div>
