@@ -30,6 +30,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
+DEBUG = str(os.getenv('DEBUG', 'False')).lower() == 'true' # Default to False if not set
 
 ALLOWED_HOSTS = []
 
@@ -57,7 +58,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'django_filters',
-    'debug_toolbar',
+    # 'debug_toolbar', # Conditionally added below
     
     # Local apps
     'accounts',
@@ -66,10 +67,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware', # Conditionally added below
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # for production
-    'corsheaders.middleware.CorsMiddleware',  # CORS middleware - must be at the top
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,6 +79,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
+
+# Conditionally add Django Debug Toolbar
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware') # Insert at the beginning
 
 ROOT_URLCONF = 'zim_rentals.urls'
 
@@ -100,6 +106,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'zim_rentals.wsgi.application'
+ASGI_APPLICATION = 'zim_rentals.asgi.application' # Added for Daphne
 
 
 # Database
@@ -285,7 +292,6 @@ ENABLE_BOOKINGS = True
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 
 # Channels
-ASGI_APPLICATION = 'zim_rentals.asgi.application'
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
