@@ -34,4 +34,4 @@ EXPOSE 8000
 ENTRYPOINT ["/code/entrypoint.sh"]
 
 # Default CMD (will be overridden by Render's start command but good for local testing)
-CMD ["daphne", "-p", "8000", "-b", "0.0.0.0", "zim_rentals.asgi:application"]
+CMD ["daphne", "-p", "10000", "-b", "0.0.0.0", "zim_rentals.asgi:application"]
