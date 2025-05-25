@@ -8,7 +8,16 @@ DEBUG = False
 # Security
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+
+# SECURE_SSL_REDIRECT = True # Potentially causes redirect loops behind a reverse proxy
+# Instead, trust the X-Forwarded-Proto header from Render
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https' )
+SECURE_SSL_REDIRECT = False # Set to False as Render handles SSL termination and enforces HTTPS.
+
+# Optional: HSTS settings (uncomment and adjust if needed after fixing the loop)
+# SECURE_HSTS_SECONDS = 31536000  # 1 year
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
 
 # Ensure we have a secure SECRET_KEY for production
 if not os.getenv('SECRET_KEY'):

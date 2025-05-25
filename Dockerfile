@@ -31,4 +31,5 @@ EXPOSE 8000
 ENTRYPOINT ["./entrypoint.sh"]
 
 # Run Gunicorn
-CMD ["gunicorn", "zim_rentals.wsgi:application", "--bind", "0.0.0.0:10000"]
+# CMD ["gunicorn", "zim_rentals.wsgi:application", "--bind", "0.0.0.0:10000"]
+CMD ["daphne", "-p", "10000", "-b", "0.0.0.0", "zim_rentals.asgi:application"]

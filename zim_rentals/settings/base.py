@@ -217,7 +217,7 @@ ACCOUNT_USERNAME_MIN_LENGTH = 3
 ACCOUNT_PASSWORD_MIN_LENGTH = 8
 ACCOUNT_USERNAME_BLACKLIST = ['admin', 'administrator', 'root', 'superuser']
 ACCOUNT_EMAIL_SUBJECT_PREFIX = '[Home Marketplace] '
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'  # Changed from 'https' to 'http' for development
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https' # Ensure this is https for production
 ACCOUNT_RATE_LIMITS = {
     'login_failed': '5/300s',  # 5 attempts per 5 minutes (replacing ACCOUNT_LOGIN_ATTEMPTS_LIMIT and TIMEOUT)
     'confirm_email': '1/180s',  # 1 attempt per 3 minutes (replacing ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN)
