@@ -130,8 +130,7 @@
 								>Find Roommate</a
 							>
 						</li>
-						{% if user.is_authenticated and user.user_type ==
-						'landlord' %}
+						{% if user.is_authenticated and user.user_type == 'landlord' %}
 						<li class="nav-item">
 							<a
 								class="nav-link"
@@ -156,8 +155,8 @@
 								class="nav-link"
 								href="{% url 'listings:landlord_messages' %}"
 							>
-								<i class="fas fa-envelope"></i> Messages {% if
-								unread_messages_count > 0 %}
+								<i class="fas fa-envelope"></i> Messages 
+								{% if unread_messages_count > 0 %}
 								<span class="badge bg-danger"
 									>{{ unread_messages_count }}</span
 								>
@@ -190,8 +189,7 @@
 										>Favorites</a
 									>
 								</li>
-								{% endif %} {% if user.user_type == 'landlord'
-								and not user.is_verified_landlord %}
+								{% endif %} {% if user.user_type == 'landlord' and not user.is_verified_landlord %}
 								<li>
 									<a
 										class="dropdown-item"

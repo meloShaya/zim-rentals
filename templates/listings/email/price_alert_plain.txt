@@ -11,15 +11,15 @@ New Matching Listings:
 - {{ listing.title }}
   ${{ listing.price }} | {{ listing.suburb }}, {{ listing.get_city_display }}
   {{ listing.get_property_type_display }} | {{ listing.bedrooms }} bed | {{ listing.bathrooms }} bath | {% if listing.is_furnished %}Furnished{% else %}Unfurnished{% endif %}
-  View at: http://{{ site.domain }}{% url 'listings:listing_detail' listing.id %}
+  View at: https://{{ site.domain }}{% url 'listings:listing_detail' listing.id %}
 
 {% endfor %}
 
 View all matching listings:
-http://{{ site.domain }}{% url 'listings:saved_search_results' saved_search.id %}
+https://{{ site.domain }}{% url 'listings:saved_search_results' saved_search.id %}
 
 ---
 You're receiving this email because you set up a price alert on Home Marketplace.
-To manage your alerts, visit: http://{{ site.domain }}{% url 'listings:saved_search_list' %}
+To manage your alerts, visit: https://{{ site.domain }}{% url 'listings:saved_search_list' %}
 
 © {% now "Y" %} Home Marketplace. All rights reserved. 

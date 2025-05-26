@@ -1,4 +1,4 @@
 {% load i18n %}
 {% autoescape off %}
-[Home Marketplace] Please Verify Your Email Address
+Please Verify Your Email Address
 {% endautoescape %} 

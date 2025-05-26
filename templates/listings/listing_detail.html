@@ -1,5 +1,5 @@
-{% extends 'base.html' %} {% load crispy_forms_tags %} {% load static %} {%block
-title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
+{% extends 'base.html' %} {% load crispy_forms_tags %} {% load static %} 
+{%block title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 <div class="container mt-4">
 	<div class="row">
 		<div class="col-md-8">
@@ -46,8 +46,7 @@ title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 								class="d-block w-100"
 								alt="{{ listing.title }}"
 							/>
-							{% if listing.landlord.is_verified_landlord and
-							forloop.first and not listing.featured_image %}
+							{% if listing.landlord.is_verified_landlord and forloop.first and not listing.featured_image %}
 							<div
 								class="carousel-caption"
 								style="
@@ -101,8 +100,7 @@ title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 			<div class="card mb-4">
 				<div class="card-body">
 					<h1 class="card-title">
-						{{ listing.title }} {% if
-						listing.landlord.is_verified_landlord %}
+						{{ listing.title }} {% if listing.landlord.is_verified_landlord %}
 						<span class="badge bg-success ms-2">
 							<i class="fas fa-shield-alt me-1"></i> Verified
 							Landlord
@@ -124,16 +122,16 @@ title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 								{{ listing.get_property_type_display }}
 							</p>
 							<p>
-								<strong>Bedrooms:</strong> {{ listing.bedrooms
-								}}
+								<strong>Bedrooms:</strong> {{ listing.bedrooms }}
 							</p>
 							<p>
-								<strong>Bathrooms:</strong> {{ listing.bathrooms
-								}}
+								<strong>Bathrooms:</strong> {{ listing.bathrooms }}
 							</p>
 							<p>
 								<strong>Furnished:</strong>
-								{% if listing.is_furnished %} Yes {% else %} No
+								{% if listing.is_furnished %} Yes 
+								{% else %} 
+								No
 								{% endif %}
 							</p>
 						</div>
@@ -161,8 +159,8 @@ title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 							</ul>
 							<p>
 								<strong>Status:</strong>
-								{% if listing.is_available %} Available {% else
-								%} Not Available {% endif %}
+								{% if listing.is_available %} Available 
+								{% else	%} Not Available {% endif %}
 							</p>
 						</div>
 					</div>
@@ -182,10 +180,7 @@ title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 					</p>
 					<div class="d-flex flex-wrap gap-2 share-buttons-container">
 						<!-- WhatsApp Share Button -->
-						{% with whatsapp_message="Found a great place
-						in"|add:listing.get_city_display|add:" for
-						$"|add:listing.price|floatformat:"-2g"|add:"! Check it
-						on Home Marketplace:" %}
+						{% with whatsapp_message="Found a great place in"|add:listing.get_city_display|add:" for $"|add:listing.price|floatformat:"-2g"|add:"! Check it on Home Marketplace:" %}
 
 						<a
 							href="https://wa.me/?text={{ whatsapp_message|urlencode }}%20{{ request.build_absolute_uri }}%3Futm_source%3Dwhatsapp%26utm_medium%3Dsocial%26utm_campaign%3Dlisting_share"
@@ -208,10 +203,7 @@ title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 						</a>
 
 						<!-- Twitter/X Share Button -->
-						{% with twitter_message="Found a great place
-						in"|add:listing.get_city_display|add:" for
-						$"|add:listing.price|floatformat:"-2g"|add:"! Check it
-						on Home Marketplace:" %}
+						{% with twitter_message="Found a great place in"|add:listing.get_city_display|add:" for $"|add:listing.price|floatformat:"-2g"|add:"! Check it on Home Marketplace:" %}
 
 						<a
 							href="https://twitter.com/intent/tweet?text={{ twitter_message|urlencode }}&url={{ request.build_absolute_uri }}%3Futm_source%3Dtwitter%26utm_medium%3Dsocial%26utm_campaign%3Dlisting_share"
@@ -224,14 +216,8 @@ title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 						{% endwith %}
 
 						<!-- Email Share Button -->
-						{% with email_subject="Great property listing on Home
-						Marketplaces"|urlencode %} {% with email_body="Hey, I
-						found this great place in
-						"|add:listing.get_city_display|add:" for
-						$"|add:listing.price|stringformat:"g"|add:"! Check it
-						out:
-						"|add:request.build_absolute_uri|add:"?utm_source=email&utm_medium=social&utm_campaign=listing_share"|urlencode
-						%}
+						{% with email_subject="Great property listing on Home Marketplaces"|urlencode %} 
+						{% with email_body="Hey, I found this great place in "|add:listing.get_city_display|add:" for $"|add:listing.price|stringformat:"g"|add:"! Check it out: "|add:request.build_absolute_uri|add:"?utm_source=email&utm_medium=social&utm_campaign=listing_share"|urlencode %}
 						<a
 							href="mailto:?subject={{ email_subject }}&body={{ email_body }}"
 							class="btn btn-secondary social-share-btn"
@@ -248,8 +234,7 @@ title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 			<div class="card mb-4">
 				<div class="card-body">
 					<h4>
-						Contact Information {% if
-						listing.landlord.is_verified_landlord %}
+						Contact Information {% if listing.landlord.is_verified_landlord %}
 						<span class="badge bg-success float-end">
 							<i class="fas fa-shield-alt me-1"></i> Verified
 						</span>
@@ -304,14 +289,12 @@ title %}{{ listing.title }} - Home Marketplace{% endblock %} {% block content%}
 					{% endif %}
 					<!-- End Moved Chat with Landlord Button -->
 
-					{% if not listing.phone_number and not
-					listing.whatsapp_number and user == listing.landlord %}
+					{% if not listing.phone_number and not listing.whatsapp_number and user == listing.landlord %}
 					<p class="text-muted">
 						You have not provided contact information for this
 						listing.
 					</p>
-					{% elif not listing.phone_number and not
-					listing.whatsapp_number and user != listing.landlord %}
+					{% elif not listing.phone_number and not listing.whatsapp_number and user != listing.landlord %}
 					<p class="text-muted">
 						The landlord has not provided public contact
 						information. Please use the chat.
