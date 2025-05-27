@@ -21,7 +21,11 @@ DATABASES = {
     }
 }
 
-    
+# STORAGES = {
+#     "default": {
+#         "BACKEND": "django.core.files.storage.FileSystemStorage",
+#     },
+# }
 
 # Static files (served by Django in DEBUG mode)
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage' # Not whitenoise for local usually

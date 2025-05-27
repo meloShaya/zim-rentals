@@ -168,16 +168,53 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# MEDIA_ROOT = BASE_DIR / 'media' # We will let S3 handle this in production
+
+# Storage Settings
+# Default to FileSystemStorage. If not in DEBUG mode and S3 vars are set, use S3.
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+MEDIA_ROOT = BASE_DIR / 'media' # For local development
+
+# AWS S3 settings for django-storages
+# These will be overridden if USE_S3 is True (i.e., not in DEBUG mode and AWS_STORAGE_BUCKET_NAME is set)
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID') # Also used by SES, ensure it has S3 permissions
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY') # Also used by SES
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME') # e.g., 'us-east-1', 'eu-west-2'
+AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN') # Default, or your CloudFront/custom domain
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400', # Cache static files for 1 day
+}
+AWS_LOCATION = 'media' # Optional: Subdirectory within your S3 bucket for media files
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+
+# Determine if we should use S3 based on DEBUG and environment variables
+USE_S3 = not DEBUG and AWS_STORAGE_BUCKET_NAME is not None
+
+if USE_S3:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage' # Optional: if you want static files on S3 too
+    # AWS_S3_STATIC_LOCATION = 'static' # If using S3 for static files
+    # STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_S3_STATIC_LOCATION}/' # If using S3 for static files
+    # No need to define MEDIA_ROOT when using S3 for default file storage as files are not stored locally
+    if 'media' in MEDIA_ROOT.__str__(): # Check if MEDIA_ROOT was the default, to avoid error if it's already None
+        MEDIA_ROOT = None # Files are not stored locally with S3
+else:
+    # Ensure MEDIA_ROOT is set for local development if not using S3
+    if MEDIA_ROOT is None:
+         MEDIA_ROOT = BASE_DIR / 'media'
+
 
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": DEFAULT_FILE_STORAGE, # Will be S3Boto3Storage in prod if configured
     },
     "staticfiles": {
+        # Keep whitenoise for static files unless you explicitly want S3 for staticfiles too
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
