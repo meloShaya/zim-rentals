@@ -38,13 +38,7 @@
 			property="og:url"
 			content="{{ request.build_absolute_uri }}{% block og_url_canonical_fallback %}{% block canonical_url_og_fallback %}{% endblock %}{% endblock %}"
 		/>
-		<!-- {#
-		<meta
-			property="og:image"
-			content="{% static 'images/default_og_image.png' %}"
-		/>
-		#} {# Add a default OG image in your static files and uncomment the line
-		above #} {% endblock %} -->
+		{% endblock %}
 
 		<!-- SEO: Twitter Card Tags -->
 		{% block twitter_tags %}
@@ -57,15 +51,7 @@
 			name="twitter:description"
 			content="{% block twitter_description %}{% block meta_description_twitter_fallback %}Search for rental properties, homes for sale, and roommates. Home Marketplace helps you find the perfect place to live.{% endblock %}{% endblock %}"
 		/>
-		<!-- {#
-		<meta
-			name="twitter:image"
-			content="{% static 'images/default_twitter_image.png' %}"
-		/>
-		#} {# Add a default Twitter image in your static files and uncomment the
-		line above #} {#
-		<meta name="twitter:site" content="@YourTwitterHandle" />
-		#} {# Add your Twitter handle if you have one #} {% endblock %} -->
+		{% endblock %} 
 
 		<!-- Bootstrap 5 CSS -->
 		<link
