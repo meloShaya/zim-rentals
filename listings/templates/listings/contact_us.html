@@ -1,0 +1,170 @@
+{% extends 'base.html' %} {% load static %} {% load crispy_forms_tags %} 
+{% block title %}Contact Us - {{ block.super }}{% endblock %} 
+{% block meta_description %}Get in touch with Home Marketplace. Send us a message or find
+our contact details.{% endblock %} 
+{% block content %}
+<div class="container mt-5 mb-5">
+	<div class="row">
+		<div class="col-lg-8 mx-auto">
+			<h1 class="mb-4 text-center">Contact Us</h1>
+			<p class="lead text-center mb-5">
+				We'd love to hear from you! Whether you have a question about
+				our services, need assistance, or just want to provide feedback,
+				please use the form below or reach out to us directly through
+				our contact details.
+			</p>
+
+			{% if messages %} {% for message in messages %}
+			<div
+				class="alert alert-{{ message.tags }} alert-dismissible fade show"
+				role="alert"
+			>
+				{{ message }}
+				<button
+					type="button"
+					class="btn-close"
+					data-bs-dismiss="alert"
+					aria-label="Close"
+				></button>
+			</div>
+			{% endfor %} {% endif %}
+
+			<div class="row">
+				<!-- Contact Form Section -->
+				<div class="col-md-7 mb-4 mb-md-0">
+					<div class="card shadow-sm">
+						<div class="card-body p-4">
+							<h3 class="card-title mb-4">Send us a Message</h3>
+							<form method="post" novalidate>
+								{% csrf_token %} {{ form|crispy }}
+								<button
+									type="submit"
+									class="btn btn-primary w-100 mt-3"
+								>
+									<i class="fas fa-paper-plane me-2"></i>Send
+									Message
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<!-- Contact Details Section -->
+				<div class="col-md-5">
+					<div class="card shadow-sm">
+						<div class="card-body p-4">
+							<h3 class="card-title mb-4">Our Contact Details</h3>
+							<ul class="list-unstyled">
+								{% if contact_details.email %}
+								<li class="mb-3">
+									<i
+										class="fas fa-envelope fa-fw text-primary me-2"
+									></i>
+									<strong>Email:</strong>
+									<a href="mailto:{{ contact_details.email }}"
+										>{{ contact_details.email }}</a
+									>
+								</li>
+								{% endif %} {% if contact_details.phone1 %}
+								<li class="mb-3">
+									<i
+										class="fas fa-phone fa-fw text-primary me-2"
+									></i>
+									<strong>Phone 1:</strong>
+									<a href="tel:{{ contact_details.phone1 }}"
+										>{{ contact_details.phone1 }}</a
+									>
+								</li>
+								{% endif %} {% if contact_details.phone2 %}
+								<li class="mb-3">
+									<i
+										class="fas fa-phone-alt fa-fw text-primary me-2"
+									></i>
+									<strong>Phone 2:</strong>
+									<a href="tel:{{ contact_details.phone2 }}"
+										>{{ contact_details.phone2 }}</a
+									>
+								</li>
+								{% endif %} {% if contact_details.address %}
+								<li class="mb-3">
+									<i
+										class="fas fa-map-marker-alt fa-fw text-primary me-2"
+									></i>
+									<strong>Address:</strong><br />
+									<span class="ms-4"
+										>{{ contact_details.address|linebreaksbr }}</span
+									>
+								</li>
+								{% endif %}
+							</ul>
+							<hr />
+							<p class="text-muted small">
+								We typically respond to inquiries within 24-48
+								business hours.
+							</p>
+							<!-- {# You can add a small map here if you have
+							coordinates and Google Maps API #} {# Example:
+							<div
+								id="contact-map"
+								style="height: 200px"
+								class="mt-3 rounded"
+							></div>
+							#} -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %} {% block extra_css %}
+<style>
+	.card {
+		border: none;
+	}
+	.list-unstyled strong {
+		font-weight: 500;
+	}
+	.fa-fw {
+		width: 1.25em;
+	}
+</style>
+{% endblock %} {# Add this if you want to initialize a map #} {# {% block
+extra_js %} #} {#
+<script>
+	 #}
+	{#    function initContactMap() { #}
+	{#        if (typeof google !== 'undefined' && google.maps) { #}
+	{#            const location = { lat: YOUR_LATITUDE, lng: YOUR_LONGITUDE }; // Replace with actual coordinates #}
+	{#            const map = new google.maps.Map(document.getElementById("contact-map"), { #}
+	{#                zoom: 15, #}
+	{#                center: location, #}
+	{#                mapId: 'YOUR_MAP_ID' // Optional: if you use specific Map IDs #}
+	{#            }); #}
+	{#            new google.maps.marker.AdvancedMarkerElement({ #}
+	{#                map: map, #}
+	{#                position: location, #}
+	{#                title: "Our Location" #}
+	{#            }); #}
+	{#        } else { #}
+	{#            console.warn("Google Maps API not loaded, cannot initialize contact map."); #}
+	{#            const mapDiv = document.getElementById("contact-map"); #}
+	{#            if(mapDiv) mapDiv.innerHTML = '<p class=\"text-danger\">Map could not be loaded.</p>'; #}
+	{#        } #}
+	{#    } #}
+	{#    // Call initContactMap if Google Maps API is already loaded or after it loads #}
+	{#    if (window.googleMapsLoaded) { #}
+	{#        initContactMap(); #}
+	{#    } else { #}
+	{#        const mapsScript = document.getElementById('google-maps-api'); #}
+	{#        if (mapsScript) { #}
+	{#            mapsScript.addEventListener('load', initContactMap); #}
+	{#        } else { #}
+	{#             // If maps script isn't on the page but you still want to try (e.g. included globally)
+	{#            window.addEventListener('load', initContactMap); #}
+	{#        } #}
+	{#    } #}
+	{#
+</script>
+#} {# {% endblock %} #}

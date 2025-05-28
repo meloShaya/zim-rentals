@@ -35,8 +35,10 @@ class ListingForm(forms.ModelForm):
         ]
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
-            'phone_number': forms.TextInput(attrs={'placeholder': '+263XXXXXXXXX'}),
-            'whatsapp_number': forms.TextInput(attrs={'placeholder': '+263XXXXXXXXX'}),
+            'phone_number': forms.TextInput(attrs={'placeholder': 'e.g +263XXXXXXXXX'}),
+            'whatsapp_number': forms.TextInput(attrs={'placeholder': 'e.g +263XXXXXXXXX'}),
+            'latitude': forms.TextInput(attrs={'placeholder': 'e.g -17.821239 (optional, but recommended for map view)'}),
+            'longitude': forms.TextInput(attrs={'placeholder': 'e.g 31.046922 (optional, but recommended for map view)'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -171,3 +173,19 @@ class SavedSearchForm(forms.ModelForm):
         for field in self.fields:
             if field != 'name':  # Name is required
                 self.fields[field].required = False 
+
+class ContactForm(forms.Form):
+    name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={'placeholder': 'Your Name', 'class': 'form-control mb-2'})
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'placeholder': 'Your Email', 'class': 'form-control mb-2'})
+    )
+    subject = forms.CharField(
+        max_length=200,
+        widget=forms.TextInput(attrs={'placeholder': 'Subject', 'class': 'form-control mb-2'})
+    )
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Your Message', 'rows': 5, 'class': 'form-control mb-3'})
+    ) 

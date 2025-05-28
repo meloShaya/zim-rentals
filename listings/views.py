@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from .models import Listing, ListingImage, Favorite, ChatMessage, RoommateProfile, SocialShare, SavedSearch
-from .forms import ListingForm, RoommateProfileForm, SavedSearchForm
+from .forms import ListingForm, RoommateProfileForm, SavedSearchForm, ContactForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import logging
 from django.template.loader import render_to_string
+from django.core.mail import send_mail
 
 def listing_list(request):
     # Get all available non-direct message listings
@@ -615,3 +616,55 @@ def toggle_saved_search_active(request, pk):
     messages.success(request, f'Search alert "{saved_search.name}" {status}!')
     
     return redirect('listings:saved_search_list')
+
+def contact_us_view(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            from_email = form.cleaned_data['email']
+            subject = form.cleaned_data['subject']
+            message_body = form.cleaned_data['message']
+
+            email_subject = f'New Contact Form Submission: {subject}'
+            email_message = (
+                f"You have a new message from your website's contact form.\n\n"
+                f"Name: {name}\n"
+                f"Email: {from_email}\n\n"
+                f"Subject: {subject}\n\n"
+                f"Message:\n{message_body}\n"
+            )
+            
+            try:
+                send_mail(
+                    email_subject,
+                    email_message,
+                    from_email, # This will be the 'from' address seen by the recipient
+                    [settings.CONTACT_EMAIL_RECIPIENT], # List of recipients
+                    fail_silently=False,
+                )
+                messages.success(request, 'Thank you for your message! We will get back to you soon.')
+                return redirect('listings:contact_us')  # Redirect to a clean form page
+            except Exception as e:
+                # Log the exception for debugging
+                logger = logging.getLogger(__name__) # Get a logger instance
+                logger.error(f"Error sending contact email: {e}", exc_info=True)
+                messages.error(request, f'Sorry, there was an error sending your message. Please try again or contact us directly.')
+
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = ContactForm()
+
+   
+    contact_details = {
+        'email': getattr(settings, 'DEFAULT_CONTACT_EMAIL', 'support@example.com'),
+        'phone1': getattr(settings, 'DEFAULT_CONTACT_PHONE1', '+263 77X XXX XXX'),
+        'phone2': getattr(settings, 'DEFAULT_CONTACT_PHONE2', '+263 71X XXX XXX'),
+        'address': getattr(settings, 'DEFAULT_CONTACT_ADDRESS', '123 Main Street, Harare, Zimbabwe')
+    }
+
+    return render(request, 'listings/contact_us.html', {
+        'form': form,
+        'contact_details': contact_details
+    })

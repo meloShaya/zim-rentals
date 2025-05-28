@@ -32,4 +32,7 @@ urlpatterns = [
     path('saved-searches/<int:pk>/delete/', views.saved_search_delete, name='saved_search_delete'),
     path('saved-searches/<int:pk>/results/', views.saved_search_results, name='saved_search_results'),
     path('saved-searches/<int:pk>/toggle/', views.toggle_saved_search_active, name='toggle_saved_search_active'),
+
+    # Contact Us URL
+    path('contact-us/', views.contact_us_view, name='contact_us'),
 ] 

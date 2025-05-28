@@ -419,3 +419,12 @@ CORS_ALLOW_CREDENTIALS = True
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+# Email settings for Contact Form
+CONTACT_EMAIL_RECIPIENT = os.getenv('CONTACT_EMAIL_RECIPIENT', 'your_admin_email@example.com') # CHANGE THIS to your actual recipient
+
+# Default contact details for display on the contact page
+DEFAULT_CONTACT_EMAIL = os.getenv('DEFAULT_CONTACT_EMAIL')
+DEFAULT_CONTACT_PHONE1 = os.getenv('DEFAULT_CONTACT_PHONE1')
+DEFAULT_CONTACT_PHONE2 = os.getenv('DEFAULT_CONTACT_PHONE2', '') # Optional
+DEFAULT_CONTACT_ADDRESS = os.getenv('DEFAULT_CONTACT_ADDRESS')
