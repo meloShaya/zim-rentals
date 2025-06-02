@@ -108,6 +108,12 @@ class CustomSignupForm(SignupForm):
                     _('Username can only contain letters and numbers.'),
                     code='username_invalid'
                 )
+            # Check if a user with this username already exists
+            if User.objects.filter(username__iexact=username).exists():
+                raise ValidationError(
+                    _('A user with this username already exists. Please choose a different username.'),
+                    code='username_exists'
+                )
         return username
     
     def clean_email(self):
