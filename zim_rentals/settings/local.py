@@ -7,7 +7,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Development specific email backend (prints to console)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 # For django-allauth, ensure generated URLs use http in local development
@@ -36,6 +36,6 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-print("[settings/local.py] Loaded local settings.")
-print(f"[settings/local.py] EMAIL_BACKEND set to: {EMAIL_BACKEND}")
-print(f"[settings/local.py] ACCOUNT_DEFAULT_HTTP_PROTOCOL set to: {ACCOUNT_DEFAULT_HTTP_PROTOCOL}")
+# print("[settings/local.py] Loaded local settings.")
+# print(f"[settings/local.py] EMAIL_BACKEND set to: {EMAIL_BACKEND}")
+# print(f"[settings/local.py] ACCOUNT_DEFAULT_HTTP_PROTOCOL set to: {ACCOUNT_DEFAULT_HTTP_PROTOCOL}")

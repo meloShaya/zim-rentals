@@ -274,13 +274,21 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Email settings
-# When using django-ses with SES API (Boto3), these are the primary settings from environment:
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND') # Should be 'django_ses.SESBackend'
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID') # For django-ses
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY') # For django-ses
-AWS_SES_REGION_NAME = os.getenv('AWS_SES_REGION_NAME') # For django-ses, e.g., 'eu-north-1'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL') # Must be a verified SES identity
-AWS_SES_AUTO_THROTTLE = float(os.getenv('AWS_SES_AUTO_THROTTLE', 0.5)) # Example, ensure it's a float
+
+# When using django-ses with SES API (Boto3), these are the primary settings from environment:
+# EMAIL_BACKEND = os.getenv('EMAIL_BACKEND') # Should be 'django_ses.SESBackend'
+# AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID') # For django-ses
+# AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY') # For django-ses
+# AWS_SES_REGION_NAME = os.getenv('AWS_SES_REGION_NAME') # For django-ses, e.g., 'eu-north-1'
+# AWS_SES_AUTO_THROTTLE = float(os.getenv('AWS_SES_AUTO_THROTTLE', 0.5)) # Example, ensure it's a float
 
 # The following are standard Django SMTP settings. 
 # If EMAIL_BACKEND is 'django_ses.SESBackend', these are typically NOT used by django-ses for API calls.
