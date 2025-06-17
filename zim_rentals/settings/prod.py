@@ -23,7 +23,7 @@ SECURE_SSL_REDIRECT = False # Set to False as Render handles SSL termination and
 if not os.getenv('SECRET_KEY'):
     raise ImproperlyConfigured("SECRET_KEY environment variable is required for production")
 
-ALLOWED_HOSTS = ['home-market-place.onrender.com', # Corrected entry
+ALLOWED_HOSTS = ['home-market-place.onrender.com', 
                  'homemarketplace.co.zw', 
                  'www.homemarketplace.co.zw',
                  'localhost',
@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ['home-market-place.onrender.com', # Corrected entry
 CSRF_TRUSTED_ORIGINS = [
     'https://home-market-place.onrender.com',
     'https://homemarketplace.co.zw',
-    'https://www.homemarketplace.co.zw', # Added missing comma
+    'https://www.homemarketplace.co.zw', 
     'http://localhost:8080',
     'http://127.0.0.1:8080',
 ]
