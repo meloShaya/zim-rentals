@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 from django.conf import settings
 
 User = get_user_model()
@@ -149,6 +150,42 @@ class RoommateProfile(models.Model):
     
     def __str__(self):
         return f"{self.user.username}'s Roommate Profile"
+
+
+class RoommateConnection(models.Model):
+    STATUS_CHOICES = (
+        ("pending", "Pending"),
+        ("accepted", "Accepted"),
+        ("declined", "Declined"),
+        ("cancelled", "Cancelled"),
+    )
+
+    requester = models.ForeignKey(User, on_delete=models.CASCADE, related_name="roommate_requests")
+    roommate_profile = models.ForeignKey(RoommateProfile, on_delete=models.CASCADE, related_name="connection_requests")
+    message = models.TextField(blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    responded_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Roommate Connection")
+        verbose_name_plural = _("Roommate Connections")
+        unique_together = ("requester", "roommate_profile")
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.requester.username} -> {self.roommate_profile.user.username} ({self.get_status_display()})"
+
+    def clean(self):
+        if self.requester_id == self.roommate_profile.user_id:
+            raise ValidationError("You cannot send a request to yourself.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        if self.status in {"accepted", "declined", "cancelled"} and self.responded_at is None:
+            self.responded_at = timezone.now()
+        super().save(*args, **kwargs)
 
 class SocialShare(models.Model):
     SOURCE_CHOICES = (

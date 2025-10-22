@@ -1,5 +1,14 @@
 from django.contrib import admin
-from .models import Listing, ListingImage, Favorite, ChatMessage, RoommateProfile, SocialShare, SavedSearch
+from .models import (
+    Listing,
+    ListingImage,
+    Favorite,
+    ChatMessage,
+    RoommateProfile,
+    RoommateConnection,
+    SocialShare,
+    SavedSearch,
+)
 
 class ListingImageInline(admin.TabularInline):
     model = ListingImage
@@ -50,6 +59,37 @@ class ChatMessageAdmin(admin.ModelAdmin):
     search_fields = ('message', 'user__username', 'listing__title')
     readonly_fields = ('created_at',)
     ordering = ('-created_at',)
+
+
+@admin.register(RoommateProfile)
+class RoommateProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'title',
+        'city',
+        'min_budget',
+        'max_budget',
+        'lifestyle',
+        'is_active',
+        'created_at',
+    )
+    list_filter = ('city', 'lifestyle', 'is_active')
+    search_fields = ('user__username', 'city', 'suburb')
+    date_hierarchy = 'created_at'
+
+
+@admin.register(RoommateConnection)
+class RoommateConnectionAdmin(admin.ModelAdmin):
+    list_display = (
+        'requester',
+        'roommate_profile',
+        'status',
+        'created_at',
+        'responded_at',
+    )
+    list_filter = ('status', 'created_at')
+    search_fields = ('requester__username', 'roommate_profile__user__username')
+    readonly_fields = ('created_at', 'updated_at', 'responded_at')
 
 @admin.register(SocialShare)
 class SocialShareAdmin(admin.ModelAdmin):

@@ -25,7 +25,7 @@ urlpatterns = [
     path('', include('listings.urls')),
     path('', include('accounts.urls')),
     # path('', include('core.urls')),
-    path('api/', include('api.urls')),
+    path('api/', include('api.urls', namespace='api')),
     path('__debug__/', include('debug_toolbar.urls')),
 ]
 
